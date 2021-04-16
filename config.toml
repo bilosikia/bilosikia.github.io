@@ -1,0 +1,5 @@
+baseURL = "https://bilosikia.github.io/"
+languageCode = "zh-cn"
+theme = "themes/simpleness"
+themesDir = "./"
+title = "bilosikia"
