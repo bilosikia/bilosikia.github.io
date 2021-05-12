@@ -68,7 +68,7 @@ output<span style=color:#960050;background-color:#1e0010>：</span> Some(<span s
     <span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Output</span>;
     <span style=color:#66d9ef>fn</span> <span style=color:#a6e22e>poll</span>(self: <span style=color:#a6e22e>Pin</span><span style=color:#f92672>&lt;&amp;</span><span style=color:#66d9ef>mut</span> Self<span style=color:#f92672>&gt;</span>, cx: <span style=color:#66d9ef>&amp;</span><span style=color:#a6e22e>mut</span> Context) -&gt; <span style=color:#a6e22e>Poll</span><span style=color:#f92672>&lt;</span>Self::Output<span style=color:#f92672>&gt;</span>;
 }
-</code></pre></div><h2 id=pin--upin>Pin & Upin</h2><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-RUST data-lang=RUST><span style=color:#66d9ef>pub</span> <span style=color:#66d9ef>struct</span> <span style=color:#a6e22e>Pin</span><span style=color:#f92672>&lt;</span>P<span style=color:#f92672>&gt;</span> {
+</code></pre></div><h2 id=pin--unpin>Pin & Unpin</h2><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-RUST data-lang=RUST><span style=color:#66d9ef>pub</span> <span style=color:#66d9ef>struct</span> <span style=color:#a6e22e>Pin</span><span style=color:#f92672>&lt;</span>P<span style=color:#f92672>&gt;</span> {
     pointer: <span style=color:#a6e22e>P</span>,
 }
 
@@ -76,7 +76,7 @@ output<span style=color:#960050;background-color:#1e0010>：</span> Some(<span s
 
 <span style=color:#66d9ef>pub</span> <span style=color:#66d9ef>struct</span> <span style=color:#a6e22e>PhantomPinned</span>;
 <span style=color:#66d9ef>impl</span> <span style=color:#f92672>!</span>Unpin <span style=color:#66d9ef>for</span> PhantomPinned {}
-</code></pre></div><ul><li>Pin&lt;P> 是一个 struct 类型，保存一个指针，能确保指针所指对象T，无法被移动, 即无法直接获取保存的指针，除非 unsafe。</li><li>Unpin 是一个自动 Trait，实现了该 Trait 的对象，即便被包装成 Pin&lt;P>，也能安全的被移动。即实现 Unpin Trait 的类型，不受Pin 的约束, 可以直接获得Pin包含的指针，包括 &mut T，Box 等。</li><li>编译器默认所有类型都是可以移动的，即默认为所有类型实现 Unpin。</li><li>!Upin 对 Unpin 取反，!Unpin 的双重否定就是 pin， 表明该类型不能随便移动。注意， !是一个操作符, 类似的还有?。</li><li>PhantomPinned 是一个 marker 类型，没有实现 Unpin, 用于取消编译器默认为类型实现 Unpin。</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#75715e>// SelfReferential 不现实Unpin
+</code></pre></div><ul><li>Pin&lt;P> 是一个 struct 类型，保存一个指针，能确保指针所指对象T，无法被移动, 即无法直接获取保存的指针，除非 unsafe。</li><li>Unpin 是一个自动 Trait，实现了该 Trait 的对象，即便被包装成 Pin&lt;P>，也能安全的被移动。即实现 Unpin Trait 的类型，不受Pin 的约束, 可以直接获得Pin包含的指针，包括 &mut T，Box 等。</li><li>编译器默认所有类型都是可以移动的，即默认为所有类型实现 Unpin。</li><li>!Unpin 对 Unpin 取反，!Unpin 的双重否定就是 pin， 表明该类型不能随便移动。注意， !是一个操作符, 类似的还有?。</li><li>PhantomPinned 是一个 marker 类型，没有实现 Unpin, 用于取消编译器默认为类型实现 Unpin。</li></ul><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#75715e>// SelfReferential 不现实Unpin
 </span><span style=color:#75715e></span><span style=color:#66d9ef>struct</span> <span style=color:#a6e22e>SelfReferential</span> {
     self_ptr: <span style=color:#f92672>*</span><span style=color:#66d9ef>const</span> Self,
     _pin: <span style=color:#a6e22e>PhantomPinned</span>,
