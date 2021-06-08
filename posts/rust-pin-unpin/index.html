@@ -8,7 +8,7 @@
         s: <span style=color:#e6db74>&#34;hello&#34;</span>.to_owned(),
         s_ref: None
     };
-    a.s_ref <span style=color:#f92672>=</span> Some(a.s.as_str());
+    a.s_ref <span style=color:#f92672>=</span> Some(a.s.as_mut());
     println<span style=color:#f92672>!</span>(<span style=color:#e6db74>&#34;{:?}&#34;</span>, a.s_ref);
     
     <span style=color:#75715e>// 下面代码编译错误
