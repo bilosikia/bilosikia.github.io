@@ -103,7 +103,7 @@
 
 /* ------- html -------*/
 html {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 body {
@@ -112,8 +112,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--normal-font);
   font-weight: 400;
-  line-height: 1.5;
-  max-width: 900px;
+  line-height: 1.8;
+  max-width: 1250px;
   padding: .5em;
   margin:0 auto;
 }
@@ -280,7 +280,7 @@ article h5, h6 {
 
 .post-text .highlight pre {
   font-size: var(--code-font);
-  font-size: 14px;
+  font-size: 18px;
   overflow-x: auto;
   margin: auto;
   padding: .5em .8em;

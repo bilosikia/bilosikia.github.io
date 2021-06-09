@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>bilosiki</title>
+    <title>bilosikia</title>
     <link>https://bilosikia.github.io/posts/</link>
-    <description>Recent content on bilosiki</description>
+    <description>Recent content on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Fri, 30 Apr 2021 17:52:54 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
