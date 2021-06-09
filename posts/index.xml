@@ -1,21 +1,2 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Posts on bilosikia</title>
-    <link>https://bilosikia.github.io/posts/posts/</link>
-    <description>Recent content in Posts on bilosikia</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Fri, 30 Apr 2021 17:52:54 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>rust Pin &amp; Unpin</title>
-      <link>https://bilosikia.github.io/posts/posts/rust-pin-unpin/</link>
-      <pubDate>Fri, 30 Apr 2021 17:52:54 +0800</pubDate>
-      
-      <guid>https://bilosikia.github.io/posts/posts/rust-pin-unpin/</guid>
-      <description>如何在 Rust 中实现一个自引用的数据结构 struct SelfRef&amp;lt;&amp;#39;a&amp;gt; { s: String, s_ref: Option&amp;lt;&amp;amp;&amp;#39;a mut str&amp;gt; } fn main() { let mut a = SelfRef { s: &amp;#34;hello&amp;#34;.to_owned(), s_ref: None }; a.s_ref = Some(a.s.as_mut()); println!(&amp;#34;{:?}&amp;#34;, a.s_ref); // 下面代码编译错误  // let b = a;  // println!(&amp;#34;{:?}&amp;#34;, b.s_ref); } output： Some(&amp;#34;hello&amp;#34;) 代码能正常运行，a.s_ref 保存了一个指向 a.s 的引用。 但是当我们执行被注释的代码时，即尝试将 a 赋值给 b 时，编译器报了如下错误：
-a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` occurs here, borrow later used here 由于 SelfRef 没有自动实现 Copy， 当执行 let b = a 时，实际发生了 move：</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on bilosikia</title><link>https://bilosikia.github.io/posts/posts/</link><description>Recent content in Posts on bilosikia</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 30 Apr 2021 17:52:54 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>rust Pin &amp; Unpin</title><link>https://bilosikia.github.io/posts/posts/rust-pin-unpin/</link><pubDate>Fri, 30 Apr 2021 17:52:54 +0800</pubDate><guid>https://bilosikia.github.io/posts/posts/rust-pin-unpin/</guid><description>如何在 Rust 中实现一个自引用的数据结构 struct SelfRef&amp;lt;&amp;#39;a&amp;gt; { s: String, s_ref: Option&amp;lt;&amp;amp;&amp;#39;a mut str&amp;gt; } fn main() { let mut a = SelfRef { s: &amp;#34;hello&amp;#34;.to_owned(), s_ref: None }; a.s_ref = Some(a.s.as_mut()); println!(&amp;#34;{:?}&amp;#34;, a.s_ref); // 下面代码编译错误 // let b = a; // println!(&amp;#34;{:?}&amp;#34;, b.s_ref); } output： Some(&amp;#34;hello&amp;#34;) 代码能正常运行，a.s_ref 保存了一个指向 a.s 的引用。 但是当我们执行被注释的代码时，即尝试将 a 赋值给 b 时，编译器报了如下错误：
+a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` occurs here, borrow later used here 由于 SelfRef 没有自动实现 Copy， 当执行 let b = a 时，实际发生了 move：</description></item></channel></rss>
