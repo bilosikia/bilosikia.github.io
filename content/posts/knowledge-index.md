@@ -14,6 +14,7 @@ draft: false
 
 - 取二进制最右非 0 位：n & (~(n - 1)), 但是有溢出的风险
 - GUARDED_BY
+- 容器元素比较：严格弱序
 
 # Rust
 
@@ -37,5 +38,3 @@ draft: false
   let bar = Some(4);
   assert!(matches!(bar, Some(x) if x > 2));
   ```
-
-  
