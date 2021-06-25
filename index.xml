@@ -6,7 +6,28 @@
     <description>Recent content on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 09 Jun 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 26 Jun 2021 01:15:43 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>算法 滑动窗口</title>
+      <link>https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
+      <pubDate>Sat, 26 Jun 2021 01:15:43 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
+      <description>时间复杂度 O(n): 左右标记都最多移动 n 次
+连续子区间和
+窗口内的元素之和，大于给定值时，则窗口右标及之后的子数组都应该算在结果中
+不能统计左下标及之前的个数，因为窗口之和可能远大于给定值，之后向后滑动时，会重复统计：
+数组： 2 4 7
+和：6
+[2, 2] -&amp;gt; 0
+[2, 4] -&amp;gt; 1
+[4, 4] -&amp;gt; 0
+[4, 7] -&amp;gt; 2
+[7,7] -&amp;gt; 3
+有重复统计
+#include &amp;lt;vector&amp;gt;#include &amp;lt;iostream&amp;gt;using namespace std; long long f(vector&amp;lt;int&amp;gt; &amp;amp;v, long long sum) { if(v.size() == 0) { return 0; } long long res = 0; int l = 0; int r = 0; long long s = v[0]; while(l &amp;lt; v.</description>
+    </item>
+    
     <item>
       <title>知识索引</title>
       <link>https://bilosikia.github.io/posts/knowledge-index/</link>
