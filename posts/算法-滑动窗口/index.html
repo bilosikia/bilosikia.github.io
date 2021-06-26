@@ -57,8 +57,7 @@
 <p><a href="https://www.nowcoder.com/questionTerminal/c7db49124acd415f801eb67de09c6d81?f=discussion">连续子区间和</a></p>
 <p>窗口内的元素之和，大于给定值时，则窗口右标及之后的子数组都应该算在结果中</p>
 <p>不能统计左下标及之前的个数，因为窗口之和可能远大于给定值，之后向后滑动时，会重复统计：</p>
-<p>数组： 2 4 7</p>
-<p>和：6</p>
+<p>数组： 2 4 7  和：6</p>
 <p>[2, 2] -&gt; 0</p>
 <p>[2, 4] -&gt; 1</p>
 <p>[4, 4] -&gt; 0</p>
@@ -111,6 +110,55 @@
     cout <span style="color:#f92672">&lt;&lt;</span> f(v, x) <span style="color:#f92672">&lt;&lt;</span> endl;
     <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
 }
+</code></pre></div><p><a href="https://leetcode.com/problems/3sum/submissions/">3Sum</a></p>
+<p>排序后，求两数之和等于相反值。</p>
+<p>窗口：如果两数之和大于相反值，窗口减少，否则窗口增加</p>
+<p>时间复杂度：O(n^2)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> threeSum(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums)
+    {
+        sort(nums.begin(), nums.end());
+
+        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> res;
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums.size(); i<span style="color:#f92672">++</span>) {
+            <span style="color:#66d9ef">if</span> (nums[i] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+                <span style="color:#66d9ef">break</span>;
+            }
+            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> nums[i] <span style="color:#f92672">==</span> nums[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
+                <span style="color:#66d9ef">continue</span>;
+            }
+
+            <span style="color:#66d9ef">int</span> m <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+            <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> nums.size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+            <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n) {
+                <span style="color:#66d9ef">if</span> (nums[m] <span style="color:#f92672">+</span> nums[n] <span style="color:#f92672">==</span> <span style="color:#f92672">-</span>nums[i]) {
+                    res.push_back(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> { nums[i], nums[m], nums[n] });
+                    m<span style="color:#f92672">++</span>;
+                    n<span style="color:#f92672">--</span>;
+                    <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">&amp;&amp;</span> nums[m] <span style="color:#f92672">==</span> nums[m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
+                        m<span style="color:#f92672">++</span>;
+                    }
+                    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> m <span style="color:#f92672">&amp;&amp;</span> nums[n] <span style="color:#f92672">==</span> nums[n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+                        n<span style="color:#f92672">--</span>;
+                    }
+                } <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> (nums[m] <span style="color:#f92672">+</span> nums[n] <span style="color:#f92672">&lt;</span> <span style="color:#f92672">-</span>nums[i]) {
+                    m<span style="color:#f92672">++</span>;
+                    <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">&amp;&amp;</span> nums[m] <span style="color:#f92672">==</span> nums[m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
+                        m<span style="color:#f92672">++</span>;
+                    }
+                } <span style="color:#66d9ef">else</span> {
+                    n<span style="color:#f92672">--</span>;
+                    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> m <span style="color:#f92672">&amp;&amp;</span> nums[n] <span style="color:#f92672">==</span> nums[n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+                        n<span style="color:#f92672">--</span>;
+                    }
+                }
+            }
+        }
+
+        <span style="color:#66d9ef">return</span> res;
+    }
+};
 </code></pre></div>
   </div>
 
