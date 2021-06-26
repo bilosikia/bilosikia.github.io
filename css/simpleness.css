@@ -112,7 +112,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--normal-font);
   font-weight: 400;
-  line-height: 1.8;
+  line-height: 1.6;
   max-width: 1250px;
   padding: .5em;
   margin:0 auto;
@@ -185,6 +185,7 @@ article a:hover {
 article {
   margin: 1em;
   padding: 1px;
+  line-height: 1.2;
 }
 
 article header {
@@ -280,7 +281,7 @@ article h5, h6 {
 
 .post-text .highlight pre {
   font-size: var(--code-font);
-  font-size: 18px;
+  font-size: 17px;
   overflow-x: auto;
   margin: auto;
   padding: .5em .8em;
