@@ -50,5 +50,20 @@ let bar = Some(4); assert!(matches!(bar, Some(x) if x &amp;gt; 2));   </descript
 a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` occurs here, borrow later used here 由于 SelfRef 没有自动实现 Copy， 当执行 let b = a 时，实际发生了 move：</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/learder-%E9%80%89%E4%B8%BE/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/learder-%E9%80%89%E4%B8%BE/</guid>
+      <description>learder 选举   只投票给比自己新的节点
+ 选举前，增加自己的 term 发起投票的节点， term 大于等于当前节点 term（第三条包含） 发起投票的节点，log 要新(Up-to-date)  log中的 term 谁大谁更新 term 号相同时，logid 越大越新 注意，比较的是当前 log 中的term，并不是current_term      一个任期只投票给一个节点
+  随机超时
+  被隔离的节点，term 号变得极大
+ 导致重新选主，影响可用性 预选举 + 其他节点同意发起重新选举的条件更严格  没有收到 Leader 的心跳，即至少有一次选举超时 Candidate 日志足够新 因此无法增加 term，重新加入集群时不会导致重新选主      转为 follower, 只要有新leader term 号至少和自己的 term 号一样大
+  Election Safety Property
+  疑问：</description>
+    </item>
+    
   </channel>
 </rss>
