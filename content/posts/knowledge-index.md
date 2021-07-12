@@ -16,6 +16,14 @@ draft: false
 - GUARDED_BY
 - 容器元素比较：严格弱序
 - s.size() - 10 的结果是无符号
+- COW: [std::string的Copy-on-Write：不如想象中美好](https://www.cnblogs.com/promise6522/archive/2012/03/22/2412686.html)
+-  [伪共享（false sharing），并发编程无声的性能杀手](https://www.cnblogs.com/cyfonly/p/5800758.html)
+
+## template
+
+- 测试类型
+- 测试满足条件
+- static_assert 不能直接写 false
 
 # Rust
 
