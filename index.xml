@@ -33,11 +33,10 @@
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/knowledge-index/</guid>
-      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++  取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险 GUARDED_BY 容器元素比较：严格弱序 s.size() - 10 的结果是无符号  Rust   dyn Trait and impl Trait in Rust
+      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++  取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险 GUARDED_BY 容器元素比较：严格弱序 s.size() - 10 的结果是无符号 COW: std::string的Copy-on-Write：不如想象中美好 伪共享（false sharing），并发编程无声的性能杀手  template  测试类型 测试满足条件 static_assert 不能直接写 false  Rust   dyn Trait and impl Trait in Rust
   On Generics and Associated Types
   inclusive ranges
-fn main() { for i in 0..=26 { println!(&amp;#34;{}&amp;#34;, i); } }   matches!
-let bar = Some(4); assert!(matches!(bar, Some(x) if x &amp;gt; 2));   </description>
+fn main() { for i in 0..=26 { println!(&amp;#34;{}&amp;#34;, i); } }   matches!</description>
     </item>
     
     <item>
