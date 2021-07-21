@@ -33,10 +33,16 @@
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/knowledge-index/</guid>
-      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++  取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险 GUARDED_BY 容器元素比较：严格弱序 s.size() - 10 的结果是无符号 COW: std::string的Copy-on-Write：不如想象中美好 伪共享（false sharing），并发编程无声的性能杀手  template  测试类型 测试满足条件 static_assert 不能直接写 false  Rust   dyn Trait and impl Trait in Rust
-  On Generics and Associated Types
-  inclusive ranges
-fn main() { for i in 0..=26 { println!(&amp;#34;{}&amp;#34;, i); } }   matches!</description>
+      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
+  GUARDED_BY
+  容器元素比较：严格弱序
+  s.size() - 10 的结果是无符号
+  COW: std::string的Copy-on-Write：不如想象中美好
+  伪共享（false sharing），并发编程无声的性能杀手
+  17 版本后，可以直接写 std::array vec = {&amp;ldquo;hello&amp;rdquo;}, 不用写类型和个数了
+  对 cast 完的指针就行 dereference 是 UB(TBAA 优化)
+![image-20210720164420645](/Users/gaokuilin/Library/Application Support/typora-user-images/image-20210720164420645.png)
+  template  测试类型 测试满足条件 static_assert 不能直接写 false  Rust   dyn Trait and impl Trait in Rust</description>
     </item>
     
     <item>
@@ -62,6 +68,31 @@ a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` 
  导致重新选主，影响可用性 预选举 + 其他节点同意发起重新选举的条件更严格  没有收到 Leader 的心跳，即至少有一次选举超时 Candidate 日志足够新 因此无法增加 term，重新加入集群时不会导致重新选主      转为 follower, 只要有新leader term 号至少和自己的 term 号一样大
   Election Safety Property
   疑问：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/raft-member-change/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/raft-member-change/</guid>
+      <description>If a single configuration change adds or removes many servers, switching the cluster directly
+from the old configuration to the new configuration can be unsafe; it isn’t possible to atomically
+switch all of the servers at once, so the cluster can potentially split into two independent majorities
+during the transition
+一次变更一个成员  when adding or removing just a single server, it is safe to switch directly to the new configuration.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/%E5%AD%A6%E4%B9%A0/</guid>
+      <description>学习 专注一件事件   体系学习，书籍优于碎片博客
+  利用碎片时间，集中于一个目标，不要用碎片时间零散学习
+  充分利用时间，不要让自己处于不知道做什么，不知道怎么做的状态
+  实践大于一切  看再多，不如自己亲手实践 把问题转化为项目 不要想着最开始覆盖所有，从最基本的开始，逐渐演进  </description>
     </item>
     
   </channel>

@@ -6,7 +6,7 @@
   <meta name="generator" content="Hugo 0.85.0" />
   <title>  | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
-  <link rel="canonical" href="https://bilosikia.github.io/posts/learder-%E9%80%89%E4%B8%BE/">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/%E5%AD%A6%E4%B9%A0/">
   <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
   
   
@@ -50,64 +50,25 @@
   
 
   <div class="post-text">
-    <h1 id="learder-选举">learder 选举</h1>
+    <h1 id="学习">学习</h1>
+<h2 id="专注一件事件">专注一件事件</h2>
 <ul>
 <li>
-<p>只投票给比自己新的节点</p>
+<p>体系学习，书籍优于碎片博客</p>
+</li>
+<li>
+<p>利用碎片时间，集中于一个目标，不要用碎片时间零散学习</p>
+</li>
+<li>
+<p>充分利用时间，不要让自己处于不知道做什么，不知道怎么做的状态</p>
+</li>
+</ul>
+<h2 id="实践大于一切">实践大于一切</h2>
 <ul>
-<li>选举前，增加自己的 term</li>
-<li>发起投票的节点， term 大于等于当前节点 term（第三条包含）</li>
-<li>发起投票的节点，log 要新(Up-to-date)
-<ul>
-<li>log中的 term 谁大谁更新</li>
-<li>term 号相同时，logid 越大越新</li>
-<li>注意，比较的是当前 log 中的term，并不是current_term</li>
+<li>看再多，不如自己亲手实践</li>
+<li>把问题转化为项目</li>
+<li>不要想着最开始覆盖所有，从最基本的开始，逐渐演进</li>
 </ul>
-</li>
-</ul>
-</li>
-<li>
-<p>一个任期只投票给一个节点</p>
-</li>
-<li>
-<p>随机超时</p>
-</li>
-<li>
-<p>被隔离的节点，term 号变得极大</p>
-<ul>
-<li>导致重新选主，影响可用性</li>
-<li>预选举 + 其他节点同意发起重新选举的条件更严格
-<ul>
-<li>没有收到 Leader 的心跳，即至少有一次选举超时</li>
-<li>Candidate 日志足够新</li>
-<li>因此无法增加 term，重新加入集群时不会导致重新选主</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>转为 follower, 只要有新leader term 号至少和自己的 term 号一样大</p>
-</li>
-<li>
-<p>Election Safety Property</p>
-</li>
-<li>
-<p>疑问：</p>
-<ul>
-<li>如果预选举成功，但是选举失败？</li>
-<li>发起选举节点如果 term 比较大，但是 log 旧，怎么加入集群呢？</li>
-</ul>
-</li>
-<li>
-<p>扩展</p>
-<ul>
-<li>leader 转换</li>
-</ul>
-</li>
-</ul>
-<h1 id="etcd-leader-select">Etcd leader select</h1>
-<h2 id="接收端">接收端</h2>
-<h2 id="发起端">发起端</h2>
 
   </div>
 
