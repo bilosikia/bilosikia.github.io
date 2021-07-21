@@ -13,13 +13,24 @@ draft: false
 # c++
 
 - 取二进制最右非 0 位：n & (~(n - 1)), 但是有溢出的风险
-- GUARDED_BY
-- 容器元素比较：严格弱序
-- s.size() - 10 的结果是无符号
-- COW: [std::string的Copy-on-Write：不如想象中美好](https://www.cnblogs.com/promise6522/archive/2012/03/22/2412686.html)
--  [伪共享（false sharing），并发编程无声的性能杀手](https://www.cnblogs.com/cyfonly/p/5800758.html)
 
-## template
+- GUARDED_BY
+
+- 容器元素比较：严格弱序
+
+- s.size() - 10 的结果是无符号
+
+- COW: [std::string的Copy-on-Write：不如想象中美好](https://www.cnblogs.com/promise6522/archive/2012/03/22/2412686.html)
+
+- [伪共享（false sharing），并发编程无声的性能杀手](https://www.cnblogs.com/cyfonly/p/5800758.html)
+
+- 17 版本后，可以直接写 std::array vec = {"hello"}, 不用写类型和个数了
+
+- 对 cast 完的指针就行 dereference 是 UB(TBAA 优化)
+
+  ![image-20210720164420645](/Users/gaokuilin/Library/Application Support/typora-user-images/image-20210720164420645.png)
+
+## template 
 
 - 测试类型
 - 测试满足条件
