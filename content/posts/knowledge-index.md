@@ -16,12 +16,15 @@ date: 2021-06-09T14:55:59+08:00
 - n & -n returns the **rightmost 1 bit in n**.
 
 - n & (n - 1) 消除最右 1
+- X % 2^n = X & (2^n - 1)，环形队列实现
 
 - GUARDED_BY
 
 - 容器元素比较：严格弱序
 
 - s.size() - 10 的结果是无符号
+
+- [intrusive](https://stackoverflow.com/questions/5004162/what-does-it-mean-for-a-data-structure-to-be-intrusive)
 
 - COW: [std::string的Copy-on-Write：不如想象中美好](https://www.cnblogs.com/promise6522/archive/2012/03/22/2412686.html)
 
