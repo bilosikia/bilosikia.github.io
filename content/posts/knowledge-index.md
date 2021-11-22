@@ -14,6 +14,10 @@ draft: false
 
 - 取二进制最右非 0 位：n & (~(n - 1)), 但是有溢出的风险
 
+- n & -n returns the **rightmost 1 bit in n**.
+
+- n & (n - 1) 消除最右 1
+
 - GUARDED_BY
 
 - 容器元素比较：严格弱序
@@ -35,6 +39,7 @@ draft: false
 - 测试类型
 - 测试满足条件
 - static_assert 不能直接写 false
+- [协变&逆变](https://www.jianshu.com/p/db76a8b08694)
 
 # Rust
 
@@ -58,3 +63,16 @@ draft: false
   let bar = Some(4);
   assert!(matches!(bar, Some(x) if x > 2));
   ```
+  
+- [fat pointer](https://guihao-liang.github.io/2020/06/06/fat-pointer) 
+
+- [Higher-Rank Trait Bounds](https://zhuanlan.zhihu.com/p/404574814)
+
+- [generator 内存优化](https://tmandry.gitlab.io/blog/posts/optimizing-await-1/)
+
+# 网络
+
+- [layer 4负载均衡](https://www.nginx.com/resources/glossary/layer-4-load-balancing/)
+- [https详解](https://segmentfault.com/a/1190000021494676)
+- [TLS安全网络传输协议简介-侯涛](https://www.bilibili.com/video/BV184411777S)
+
