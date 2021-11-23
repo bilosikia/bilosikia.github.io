@@ -1,3 +1,9 @@
+---
+title: "async fn memory layout"
+date: 2021-11-23T14:55:59+08:00
+draft: false
+---
+
 这个问题源于 rust 的一个 issue: [Async fn doubles argument size](https://github.com/rust-lang/rust/issues/62958)
 
 考虑下面的代码，可能会产生一下几个问题：

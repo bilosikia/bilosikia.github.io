@@ -1,3 +1,0 @@
-- [package和文件夹的关系](https://www.zhihu.com/question/60426831)
-- [Go包初始化顺序](https://zhuanlan.zhihu.com/p/183044306)
-- 条件词法作用域

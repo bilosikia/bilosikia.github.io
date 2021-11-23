@@ -1,7 +1,6 @@
 ---
-title: "知识索引"
+title: "knowledge index"
 date: 2021-06-09T14:55:59+08:00
-draft: false
 ---
 
 # Linux
@@ -76,3 +75,7 @@ draft: false
 - [https详解](https://segmentfault.com/a/1190000021494676)
 - [TLS安全网络传输协议简介-侯涛](https://www.bilibili.com/video/BV184411777S)
 
+# go
+
+- [package和文件夹的关系](https://www.zhihu.com/question/60426831)
+- [Go包初始化顺序](https://zhuanlan.zhihu.com/p/183044306)
