@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.85.0" />
+  <meta name="generator" content="Hugo 0.89.4" />
   <title> 算法 滑动窗口 | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">
@@ -64,7 +64,7 @@
 <p>[4, 7] -&gt; 2</p>
 <p>[7,7] -&gt; 3</p>
 <p>有重复统计</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
 </span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
 
@@ -114,7 +114,7 @@
 <p>排序后，求两数之和等于相反值。</p>
 <p>窗口：如果两数之和大于相反值，窗口减少，否则窗口增加</p>
 <p>时间复杂度：O(n^2)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
 <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
     vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> threeSum(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums)
     {
@@ -161,7 +161,7 @@
 };
 </code></pre></div><p><a href="https://leetcode.com/problems/contains-duplicate-iii/">Contains Duplicate III</a></p>
 <p>桶排序，巧妙之处在于一个捅中只会用一个元素</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
 <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
     <span style="color:#66d9ef">bool</span> containsNearbyAlmostDuplicate(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums, <span style="color:#66d9ef">int</span> k, <span style="color:#66d9ef">int</span> t) {
         <span style="color:#66d9ef">if</span>(k <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> t <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
@@ -211,22 +211,8 @@
     
   </footer>
   
-  <div class="comments">
-  <div class="comments">
-
-
-
-</div>
-  </div>
 </article>
 
-  <div class="foot">
-  
-  &copy;  - 2021 &#183;
-  <a href="/"> bilosikia </a> &#183;
-  Theme <a href="https://github.com/RainerChiang/simpleness">Simpleness</a> Powered by <a href="https://gohugo.io/">Hugo</a> &#183;
-  <a href="#"><i class="fas fa-chevron-up"></i></a>
-</div>
 </body>
   
 

@@ -6,7 +6,7 @@
   <meta name="generator" content="Hugo 0.89.4" />
   <title>  | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
-  <link rel="canonical" href="https://bilosikia.github.io/posts/%E5%AD%A6%E4%B9%A0/">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/raft/servehttpkvapi/">
   <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
   
   
@@ -50,24 +50,60 @@
   
 
   <div class="post-text">
-    <h1 id="学习">学习</h1>
-<h2 id="专注一件事件">专注一件事件</h2>
+    <h1 id="servehttpkvapi">serveHttpKVAPI</h1>
+<p>store.proposeC -&gt; raft.node.propc</p>
 <ul>
-<li>
-<p>体系学习，书籍优于碎片博客</p>
-</li>
-<li>
-<p>利用碎片时间，集中于一个目标，不要用碎片时间零散学习</p>
-</li>
-<li>
-<p>充分利用时间，不要让自己处于不知道做什么，不知道怎么做的状态</p>
-</li>
+<li>put
+<ul>
+<li>store.Propose
+<ul>
+<li>s.proposeC &lt;- buf.String()
+<ul>
+<li>prop, ok := &lt;-rc.proposeC
+<ul>
+<li>rc.node.Propose(context.TODO(), []byte(prop))
+<ul>
+<li>stepWait
+<ul>
+<li>n.propc &lt;- pm
+<ul>
+<li>pm := &lt;-propc:
+<ul>
+<li>r.Step(m)
+<ul>
+<li>r.step(r, m)
+<ul>
+<li>r.appendEntry(m.Entries&hellip;)</li>
+<li>r.bcastAppend()</li>
 </ul>
-<h2 id="实践大于一切">实践大于一切</h2>
-<ul>
-<li>看再多，不如自己亲手实践</li>
-<li>把问题转化为项目</li>
-<li>不要想着最开始覆盖所有，从最基本的开始，逐渐演进</li>
+</li>
+<li>newPipelineHandler</li>
+</ul>
+</li>
+<li>h.r.Process(context.TODO(), m)</li>
+</ul>
+</li>
+<li>Raftnode.process</li>
+</ul>
+</li>
+<li>rc.node.Step(ctx, m)</li>
+</ul>
+</li>
+<li>n.recvc &lt;- m:</li>
+</ul>
+</li>
+<li>r.Step(m)</li>
+</ul>
+</li>
+<li>n.rn.HasReady()</li>
+</ul>
+</li>
+<li>readyc &lt;- rd:</li>
+</ul>
+</li>
+<li>rd := &lt;-rc.node.Ready()</li>
+</ul>
+</li>
 </ul>
 
   </div>

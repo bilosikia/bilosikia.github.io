@@ -3,8 +3,8 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.85.0" />
-  <title> 知识索引 | bilosikia </title>
+  <meta name="generator" content="Hugo 0.89.4" />
+  <title> knowledge index | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/knowledge-index/">
   <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
@@ -36,7 +36,7 @@
   
 <article class="post">
   <header class="post-header">
-    <h1 style="text-align: center;" >知识索引</h1>
+    <h1 style="text-align: center;" >knowledge index</h1>
     <div class="post-metadata">
     
       <time datetime="2021-06-09T14:55:59&#43;08:00">June 09, 2021</time> &nbsp; 
@@ -62,6 +62,12 @@
 <ul>
 <li>
 <p>取二进制最右非 0 位：n &amp; (~(n - 1)), 但是有溢出的风险</p>
+</li>
+<li>
+<p>n &amp; -n returns the <strong>rightmost 1 bit in n</strong>.</p>
+</li>
+<li>
+<p>n &amp; (n - 1) 消除最右 1</p>
 </li>
 <li>
 <p>GUARDED_BY</p>
@@ -91,6 +97,7 @@
 <li>测试类型</li>
 <li>测试满足条件</li>
 <li>static_assert 不能直接写 false</li>
+<li><a href="https://www.jianshu.com/p/db76a8b08694">协变&amp;逆变</a></li>
 </ul>
 <h1 id="rust">Rust</h1>
 <ul>
@@ -102,17 +109,37 @@
 </li>
 <li>
 <p>inclusive ranges</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
-    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0</span>..<span style="color:#f92672">=</span><span style="color:#ae81ff">26</span> {
-        println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}&#34;</span>, i);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">for</span> i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">..=</span><span style="color:#ae81ff">26</span> {
+        println!(<span style="color:#e6db74">&#34;{}&#34;</span>, i);
     }
 }
 </code></pre></div></li>
 <li>
 <p>matches!</p>
-<pre><code>let bar = Some(4);
+<pre tabindex="0"><code>let bar = Some(4);
 assert!(matches!(bar, Some(x) if x &gt; 2));
 </code></pre></li>
+<li>
+<p><a href="https://guihao-liang.github.io/2020/06/06/fat-pointer">fat pointer</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/404574814">Higher-Rank Trait Bounds</a></p>
+</li>
+<li>
+<p><a href="https://tmandry.gitlab.io/blog/posts/optimizing-await-1/">generator 内存优化</a></p>
+</li>
+</ul>
+<h1 id="网络">网络</h1>
+<ul>
+<li><a href="https://www.nginx.com/resources/glossary/layer-4-load-balancing/">layer 4负载均衡</a></li>
+<li><a href="https://segmentfault.com/a/1190000021494676">https详解</a></li>
+<li><a href="https://www.bilibili.com/video/BV184411777S">TLS安全网络传输协议简介-侯涛</a></li>
+</ul>
+<h1 id="go">go</h1>
+<ul>
+<li><a href="https://www.zhihu.com/question/60426831">package和文件夹的关系</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/183044306">Go包初始化顺序</a></li>
 </ul>
 
   </div>
@@ -126,22 +153,8 @@ assert!(matches!(bar, Some(x) if x &gt; 2));
     
   </footer>
   
-  <div class="comments">
-  <div class="comments">
-
-
-
-</div>
-  </div>
 </article>
 
-  <div class="foot">
-  
-  &copy;  - 2021 &#183;
-  <a href="/"> bilosikia </a> &#183;
-  Theme <a href="https://github.com/RainerChiang/simpleness">Simpleness</a> Powered by <a href="https://gohugo.io/">Hugo</a> &#183;
-  <a href="#"><i class="fas fa-chevron-up"></i></a>
-</div>
 </body>
   
 

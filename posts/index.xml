@@ -6,7 +6,32 @@
     <description>Recent content in Posts on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 26 Jun 2021 01:15:43 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 23 Nov 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>async fn memory layout</title>
+      <link>https://bilosikia.github.io/posts/rust/async-fn-memory-layout/</link>
+      <pubDate>Tue, 23 Nov 2021 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/async-fn-memory-layout/</guid>
+      <description>这个问题源于 rust 的一个 issue: Async fn doubles argument size
+考虑下面的代码，可能会产生一下几个问题：
+  async fn 生成的对象内存如何布局？
+  为什么 fut1 和 fut2 的大小不一样?
+  async fn wait() {} async fn foo(arg: [u8; 10]) { wait().await; drop(arg); } fn main() { let fut1 = async { let arg = [0u8; 10]; wait().await; drop(arg); }; let fut2 = foo([0u8; 10]); println!(&amp;#34;{}, {}&amp;#34;, std::mem::size_of_val(&amp;amp;fut1), std::mem::size_of_val(&amp;amp;fut2)); } 12, 22 async fn 对象内存布局 每个 async 函数被编译器实现为一个 generator，每个 await 对应于一个 yield ，每个 yield 点需要保存当前必要的上下文用于后续恢复执行。</description>
+    </item>
+    
+    <item>
+      <title>lifetime and drop</title>
+      <link>https://bilosikia.github.io/posts/rust/lifetime-and-drop/</link>
+      <pubDate>Tue, 23 Nov 2021 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/lifetime-and-drop/</guid>
+      <description>Rust 的生命周期检查为静态检查, 并且为非词法作用域。
+Rust把生命周期检查的步骤由HIR改为了MIR，以便可以降低生命周期检查的粒度，使生命周期规则从词法作用域转变成非词法作用域
+let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp;#34;, x); // This is OK, x is no longer needed data.push(4); 但如果 x 实现了 Drop 会怎么样呢？
+#[derive(Debug)] struct X&amp;lt;&amp;#39;a&amp;gt;(&amp;amp;&amp;#39;a i32); impl Drop for X&amp;lt;&amp;#39;_&amp;gt; { fn drop(&amp;amp;mut self) {} } let mut data = vec![1, 2, 3]; let x = X(&amp;amp;data[0]); println!(&amp;#34;{:?}&amp;#34;, x); data.push(4); // Here, the destructor is run and therefore this&amp;#39;ll fail to compile.</description>
+    </item>
+    
     <item>
       <title>算法 滑动窗口</title>
       <link>https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
@@ -28,39 +53,38 @@
     </item>
     
     <item>
-      <title>知识索引</title>
+      <title>knowledge index</title>
       <link>https://bilosikia.github.io/posts/knowledge-index/</link>
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/knowledge-index/</guid>
       <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
+  n &amp;amp; -n returns the rightmost 1 bit in n.
+  n &amp;amp; (n - 1) 消除最右 1
   GUARDED_BY
   容器元素比较：严格弱序
   s.size() - 10 的结果是无符号
   COW: std::string的Copy-on-Write：不如想象中美好
   伪共享（false sharing），并发编程无声的性能杀手
-  17 版本后，可以直接写 std::array vec = {&amp;ldquo;hello&amp;rdquo;}, 不用写类型和个数了
-  对 cast 完的指针就行 dereference 是 UB(TBAA 优化)
-![image-20210720164420645](/Users/gaokuilin/Library/Application Support/typora-user-images/image-20210720164420645.png)
-  template  测试类型 测试满足条件 static_assert 不能直接写 false  Rust   dyn Trait and impl Trait in Rust</description>
+  17 版本后，可以直接写 std::array vec = {&amp;ldquo;hello&amp;rdquo;}, 不用写类型和个数了</description>
     </item>
     
     <item>
       <title>rust Pin &amp; Unpin</title>
-      <link>https://bilosikia.github.io/posts/rust-pin-unpin/</link>
+      <link>https://bilosikia.github.io/posts/rust/rust-pin-unpin/</link>
       <pubDate>Fri, 30 Apr 2021 17:52:54 +0800</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/rust-pin-unpin/</guid>
+      <guid>https://bilosikia.github.io/posts/rust/rust-pin-unpin/</guid>
       <description>如何在 Rust 中实现一个自引用的数据结构 struct SelfRef&amp;lt;&amp;#39;a&amp;gt; { s: String, s_ref: Option&amp;lt;&amp;amp;&amp;#39;a mut str&amp;gt; } fn main() { let mut a = SelfRef { s: &amp;#34;hello&amp;#34;.to_owned(), s_ref: None }; a.s_ref = Some(a.s.as_mut()); println!(&amp;#34;{:?}&amp;#34;, a.s_ref); // 下面代码编译错误  // let b = a;  // println!(&amp;#34;{:?}&amp;#34;, b.s_ref); } output： Some(&amp;#34;hello&amp;#34;) 代码能正常运行，a.s_ref 保存了一个指向 a.s 的引用。 但是当我们执行被注释的代码时，即尝试将 a 赋值给 b 时，编译器报了如下错误：
 a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` occurs here, borrow later used here 由于 SelfRef 没有自动实现 Copy， 当执行 let b = a 时，实际发生了 move：</description>
     </item>
     
     <item>
       <title></title>
-      <link>https://bilosikia.github.io/posts/learder-%E9%80%89%E4%B8%BE/</link>
+      <link>https://bilosikia.github.io/posts/raft/learder-%E9%80%89%E4%B8%BE/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/learder-%E9%80%89%E4%B8%BE/</guid>
+      <guid>https://bilosikia.github.io/posts/raft/learder-%E9%80%89%E4%B8%BE/</guid>
       <description>learder 选举   只投票给比自己新的节点
  选举前，增加自己的 term 发起投票的节点， term 大于等于当前节点 term（第三条包含） 发起投票的节点，log 要新(Up-to-date)  log中的 term 谁大谁更新 term 号相同时，logid 越大越新 注意，比较的是当前 log 中的term，并不是current_term      一个任期只投票给一个节点
   随机超时
@@ -72,15 +96,25 @@ a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` 
     
     <item>
       <title></title>
-      <link>https://bilosikia.github.io/posts/raft-member-change/</link>
+      <link>https://bilosikia.github.io/posts/raft/raft-member-change/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/raft-member-change/</guid>
+      <guid>https://bilosikia.github.io/posts/raft/raft-member-change/</guid>
       <description>If a single configuration change adds or removes many servers, switching the cluster directly
 from the old configuration to the new configuration can be unsafe; it isn’t possible to atomically
 switch all of the servers at once, so the cluster can potentially split into two independent majorities
 during the transition
 一次变更一个成员  when adding or removing just a single server, it is safe to switch directly to the new configuration.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/raft/servehttpkvapi/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/raft/servehttpkvapi/</guid>
+      <description>serveHttpKVAPI store.proposeC -&amp;gt; raft.node.propc
+ put  store.Propose  s.proposeC &amp;lt;- buf.String()  prop, ok := &amp;lt;-rc.proposeC  rc.node.Propose(context.TODO(), []byte(prop))  stepWait  n.propc &amp;lt;- pm  pm := &amp;lt;-propc:  r.Step(m)  r.step(r, m)  r.appendEntry(m.Entries&amp;hellip;) r.bcastAppend()   newPipelineHandler   h.r.Process(context.TODO(), m)   Raftnode.process   rc.node.Step(ctx, m)   n.recvc &amp;lt;- m:   r.Step(m)   n.rn.HasReady()   readyc &amp;lt;- rd:   rd := &amp;lt;-rc.</description>
     </item>
     
     <item>
@@ -93,6 +127,15 @@ during the transition
   利用碎片时间，集中于一个目标，不要用碎片时间零散学习
   充分利用时间，不要让自己处于不知道做什么，不知道怎么做的状态
   实践大于一切  看再多，不如自己亲手实践 把问题转化为项目 不要想着最开始覆盖所有，从最基本的开始，逐渐演进  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/%E6%AF%8F%E6%97%A5%E9%98%85%E8%AF%BB/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/%E6%AF%8F%E6%97%A5%E9%98%85%E8%AF%BB/</guid>
+      <description>2021-8-25  Inline In Rust 并查集  </description>
     </item>
     
   </channel>

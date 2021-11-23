@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Hugo 0.89.4" />
+  <title> lifetime and drop | bilosikia </title>
+  <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/rust/lifetime-and-drop/">
+  <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
+  
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+  
+</head>
+<body class="container">
+  <nav class="navigation">
+  <div class="nav-left">
+    
+    <a href="https://bilosikia.github.io/">bilosikia</a>
+    
+    <div class="nav-item nav-title">
+      <a href="https://bilosikia.github.io/"> bilosikia</a>
+    </div>
+    <div class="nav-item nav-menu">
+      
+    </div>
+  </div>
+  <div class="nav-item nav-right fontawesome">
+    
+    
+    
+  </div>
+</nav>
+
+  
+<article class="post">
+  <header class="post-header">
+    <h1 style="text-align: center;" >lifetime and drop</h1>
+    <div class="post-metadata">
+    
+      <time datetime="2021-11-23T14:55:59&#43;08:00">November 23, 2021</time> &nbsp; 
+    
+    
+    
+    
+    
+    
+    </div>
+  </header>
+
+  
+
+  <div class="post-text">
+    <p>Rust 的生命周期检查为静态检查, 并且为非词法作用域。</p>
+<p><em>Rust把生命周期检查的步骤由HIR改为了MIR，以便可以降低生命周期检查的粒度，使生命周期规则从词法作用域转变成非词法作用域</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> data <span style="color:#f92672">=</span> vec![<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>];
+<span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>data[<span style="color:#ae81ff">0</span>];
+println!(<span style="color:#e6db74">&#34;{}&#34;</span>, x);
+<span style="color:#75715e">// This is OK, x is no longer needed
+</span><span style="color:#75715e"></span>data.push(<span style="color:#ae81ff">4</span>);
+</code></pre></div><p>但如果 x 实现了 Drop 会怎么样呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">#[derive(Debug)]</span>
+<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">X</span><span style="color:#f92672">&lt;&#39;</span><span style="color:#a6e22e">a</span><span style="color:#f92672">&gt;</span>(<span style="color:#f92672">&amp;&#39;</span><span style="color:#a6e22e">a</span> <span style="color:#66d9ef">i32</span>);
+
+<span style="color:#66d9ef">impl</span> Drop <span style="color:#66d9ef">for</span> X<span style="color:#f92672">&lt;&#39;</span>_<span style="color:#f92672">&gt;</span> {
+    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">drop</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self) {}
+}
+
+<span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> data <span style="color:#f92672">=</span> vec![<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>];
+<span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> X(<span style="color:#f92672">&amp;</span>data[<span style="color:#ae81ff">0</span>]);
+println!(<span style="color:#e6db74">&#34;{:?}&#34;</span>, x);
+data.push(<span style="color:#ae81ff">4</span>);
+<span style="color:#75715e">// Here, the destructor is run and therefore this&#39;ll fail to compile.
+</span></code></pre></div><p>当实现 Drop 时，生成的代码会隐式的添加 drop 调用，实际的生命周期比看到的非词法作用域要长。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    
+
+    
+
+    
+    
+  </footer>
+  
+</article>
+
+</body>
+  
+
+
+
+</html>

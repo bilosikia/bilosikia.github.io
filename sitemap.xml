@@ -2,11 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://bilosikia.github.io/posts/rust/async-fn-memory-layout/</loc>
+    <lastmod>2021-11-23T14:55:59+08:00</lastmod>
+  </url><url>
     <loc>https://bilosikia.github.io/</loc>
-    <lastmod>2021-06-26T01:15:43+08:00</lastmod>
+    <lastmod>2021-11-23T14:55:59+08:00</lastmod>
+  </url><url>
+    <loc>https://bilosikia.github.io/posts/rust/lifetime-and-drop/</loc>
+    <lastmod>2021-11-23T14:55:59+08:00</lastmod>
   </url><url>
     <loc>https://bilosikia.github.io/posts/</loc>
-    <lastmod>2021-06-26T01:15:43+08:00</lastmod>
+    <lastmod>2021-11-23T14:55:59+08:00</lastmod>
   </url><url>
     <loc>https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</loc>
     <lastmod>2021-06-26T01:15:43+08:00</lastmod>
@@ -14,14 +20,18 @@
     <loc>https://bilosikia.github.io/posts/knowledge-index/</loc>
     <lastmod>2021-06-09T14:55:59+08:00</lastmod>
   </url><url>
-    <loc>https://bilosikia.github.io/posts/rust-pin-unpin/</loc>
+    <loc>https://bilosikia.github.io/posts/rust/rust-pin-unpin/</loc>
     <lastmod>2021-04-30T17:52:54+08:00</lastmod>
   </url><url>
-    <loc>https://bilosikia.github.io/posts/learder-%E9%80%89%E4%B8%BE/</loc>
+    <loc>https://bilosikia.github.io/posts/raft/learder-%E9%80%89%E4%B8%BE/</loc>
   </url><url>
-    <loc>https://bilosikia.github.io/posts/raft-member-change/</loc>
+    <loc>https://bilosikia.github.io/posts/raft/raft-member-change/</loc>
+  </url><url>
+    <loc>https://bilosikia.github.io/posts/raft/servehttpkvapi/</loc>
   </url><url>
     <loc>https://bilosikia.github.io/posts/%E5%AD%A6%E4%B9%A0/</loc>
+  </url><url>
+    <loc>https://bilosikia.github.io/posts/%E6%AF%8F%E6%97%A5%E9%98%85%E8%AF%BB/</loc>
   </url><url>
     <loc>https://bilosikia.github.io/categories/</loc>
   </url><url>
