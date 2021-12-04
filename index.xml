@@ -81,17 +81,6 @@ a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` 
     
     <item>
       <title></title>
-      <link>https://bilosikia.github.io/posts/async-fn-%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://bilosikia.github.io/posts/async-fn-%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F/</guid>
-      <description>这个问题源于 rust 的一个 issue: Async fn doubles argument size)
-考虑下面的代码，可能会产生一下几个问题：
- async fn 生成的对象内存如何布局？ 为什么 fut1 和 fut2 的大小不一样?  async fn wait() {} async fn foo(arg: [u8; 10]) { wait().await; drop(arg); } fn main() { let fut1 = async { let arg = [0u8; 10]; wait().await; drop(arg); }; let fut2 = foo([0u8; 10]); println!(&amp;#34;{}, {}&amp;#34;, std::mem::size_of_val(&amp;amp;fut1), std::mem::size_of_val(&amp;amp;fut2)); } 12, 22 async fn 对象内存布局 每个 async 函数被编译器实现为一个 generator，每个 await 对应于一个 yield ，每个 yield 点需要保存当前必要的上下文用于后续恢复执行。</description>
-    </item>
-    
-    <item>
-      <title></title>
       <link>https://bilosikia.github.io/posts/etcd-raft/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
