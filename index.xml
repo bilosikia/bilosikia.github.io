@@ -61,12 +61,12 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
       <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
   n &amp;amp; -n returns the rightmost 1 bit in n.
   n &amp;amp; (n - 1) 消除最右 1
+  X % 2^n = X &amp;amp; (2^n - 1)，环形队列实现
   GUARDED_BY
   容器元素比较：严格弱序
   s.size() - 10 的结果是无符号
-  COW: std::string的Copy-on-Write：不如想象中美好
-  伪共享（false sharing），并发编程无声的性能杀手
-  17 版本后，可以直接写 std::array vec = {&amp;ldquo;hello&amp;rdquo;}, 不用写类型和个数了</description>
+  intrusive
+  COW: std::string的Copy-on-Write：不如想象中美好</description>
     </item>
     
     <item>
@@ -77,6 +77,26 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
       <guid>https://bilosikia.github.io/posts/rust/rust-pin-unpin/</guid>
       <description>如何在 Rust 中实现一个自引用的数据结构 struct SelfRef&amp;lt;&amp;#39;a&amp;gt; { s: String, s_ref: Option&amp;lt;&amp;amp;&amp;#39;a mut str&amp;gt; } fn main() { let mut a = SelfRef { s: &amp;#34;hello&amp;#34;.to_owned(), s_ref: None }; a.s_ref = Some(a.s.as_mut()); println!(&amp;#34;{:?}&amp;#34;, a.s_ref); // 下面代码编译错误  // let b = a;  // println!(&amp;#34;{:?}&amp;#34;, b.s_ref); } output： Some(&amp;#34;hello&amp;#34;) 代码能正常运行，a.s_ref 保存了一个指向 a.s 的引用。 但是当我们执行被注释的代码时，即尝试将 a 赋值给 b 时，编译器报了如下错误：
 a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` occurs here, borrow later used here 由于 SelfRef 没有自动实现 Copy， 当执行 let b = a 时，实际发生了 move：</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/async-fn-%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/async-fn-%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F/</guid>
+      <description>这个问题源于 rust 的一个 issue: Async fn doubles argument size)
+考虑下面的代码，可能会产生一下几个问题：
+ async fn 生成的对象内存如何布局？ 为什么 fut1 和 fut2 的大小不一样?  async fn wait() {} async fn foo(arg: [u8; 10]) { wait().await; drop(arg); } fn main() { let fut1 = async { let arg = [0u8; 10]; wait().await; drop(arg); }; let fut2 = foo([0u8; 10]); println!(&amp;#34;{}, {}&amp;#34;, std::mem::size_of_val(&amp;amp;fut1), std::mem::size_of_val(&amp;amp;fut2)); } 12, 22 async fn 对象内存布局 每个 async 函数被编译器实现为一个 generator，每个 await 对应于一个 yield ，每个 yield 点需要保存当前必要的上下文用于后续恢复执行。</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/etcd-raft/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/etcd-raft/</guid>
+      <description>etcd raft </description>
     </item>
     
     <item>
