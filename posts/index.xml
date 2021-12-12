@@ -110,6 +110,16 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
     </item>
     
     <item>
+      <title>Lock-Free简介</title>
+      <link>https://bilosikia.github.io/posts/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sat, 21 Sep 2019 01:15:43 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/</guid>
+      <description>基本概念  Wait-freedom:  Wait-freedom means that each thread moves forward regardless of external factors like contention from other threads, other thread blocking. Each operations is executed in a bounded number of steps. It&amp;rsquo;s the strongest guarantee for synchronization algorithms.
+ Lock-freedom:  Lock-freedom means that a system as a whole moves forward regardless of anything. Forward progress for each individual thread is not guaranteed (that is, individual threads can starve).</description>
+    </item>
+    
+    <item>
       <title></title>
       <link>https://bilosikia.github.io/posts/etcd-raft/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
