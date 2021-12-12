@@ -16,7 +16,7 @@ date: 2021-06-09T14:55:59+08:00
 - n & -n returns the **rightmost 1 bit in n**.
 
 - n & (n - 1) 消除最右 1
-- X % 2^n = X & (2^n - 1)，环形队列实现
+- X % 2^n = X & (2^n - 1)，环形队列，时间轮实现
 
 - GUARDED_BY
 
