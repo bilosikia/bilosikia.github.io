@@ -99,6 +99,17 @@ a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` 
     </item>
     
     <item>
+      <title>InnoDB 锁</title>
+      <link>https://bilosikia.github.io/posts/db/innodb-%E9%94%81/</link>
+      <pubDate>Sat, 16 Nov 2019 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/db/innodb-%E9%94%81/</guid>
+      <description>事务隔离级别  READ UNCOMMITTED  脏读。   READ COMMITTED  Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。   REPEATABLE READ (默认)  逻辑意义上的更新丢失问题。   SERIALIZABLE  锁 lock的对象是事务，锁定的是数据库中的对象，如表，页，行。一般在事务commit和rollback后释放。
+INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事务在行级上的琐和表级上的锁同时存在。
+锁的类型  表级锁  共享锁（S Lock），会阻塞其他事务修改表数据。 排他锁（X Lock），会阻塞其他事务读和写。 意向共享锁（IS Lock），事务想要获得一张表中某几行的共享锁。 意向排他锁（IX Lock），事务想要获得一张表中某几行的排他锁。   行级锁  共享锁（S Lock），允许事务读一行数据，阻塞其他事务修改数据。 排他锁（X Lock），允许事务删除或更新一行数据，阻塞其他事务读取和修改数据。    意向锁  The main purpose of IX and IS locks is to show that someone is locking a row, or going to lock a row in the table.</description>
+    </item>
+    
+    <item>
       <title></title>
       <link>https://bilosikia.github.io/posts/etcd-raft/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

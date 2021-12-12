@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Hugo 0.90.1" />
+  <title> InnoDB 锁 | bilosikia </title>
+  <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/db/innodb-%E9%94%81/">
+  <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
+  
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+  
+</head>
+<body class="container">
+  <nav class="navigation">
+  <div class="nav-left">
+    
+    <a href="https://bilosikia.github.io/">bilosikia</a>
+    
+    <div class="nav-item nav-title">
+      <a href="https://bilosikia.github.io/"> bilosikia</a>
+    </div>
+    <div class="nav-item nav-menu">
+      
+    </div>
+  </div>
+  <div class="nav-item nav-right fontawesome">
+    
+    
+    
+  </div>
+</nav>
+
+  
+<article class="post">
+  <header class="post-header">
+    <h1 style="text-align: center;" >InnoDB 锁</h1>
+    <div class="post-metadata">
+    
+      <time datetime="2019-11-16T14:55:59&#43;08:00">November 16, 2019</time> &nbsp; 
+    
+    
+    
+    
+    
+    
+    </div>
+  </header>
+
+  
+
+  <div class="post-text">
+    <h1 id="事务隔离级别">事务隔离级别</h1>
+<ul>
+<li>READ UNCOMMITTED
+<ul>
+<li>脏读。</li>
+</ul>
+</li>
+<li>READ COMMITTED
+<ul>
+<li>Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。</li>
+</ul>
+</li>
+<li>REPEATABLE READ (默认)
+<ul>
+<li>逻辑意义上的更新丢失问题。</li>
+</ul>
+</li>
+<li>SERIALIZABLE</li>
+</ul>
+<h1 id="锁">锁</h1>
+<p>lock的对象是事务，锁定的是数据库中的对象，如表，页，行。一般在事务commit和rollback后释放。</p>
+<p>INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事务在行级上的琐和表级上的锁同时存在。</p>
+<p><img src="./imags/innodb-lock.png" alt=""></p>
+<h2 id="锁的类型">锁的类型</h2>
+<ul>
+<li>表级锁
+<ul>
+<li>共享锁（S Lock），会阻塞其他事务修改表数据。</li>
+<li>排他锁（X Lock），会阻塞其他事务读和写。</li>
+<li>意向共享锁（IS Lock），事务想要获得一张表中某几行的共享锁。</li>
+<li>意向排他锁（IX Lock），事务想要获得一张表中某几行的排他锁。</li>
+</ul>
+</li>
+<li>行级锁
+<ul>
+<li>共享锁（S Lock），允许事务读一行数据，阻塞其他事务修改数据。</li>
+<li>排他锁（X Lock），允许事务删除或更新一行数据，阻塞其他事务读取和修改数据。</li>
+</ul>
+</li>
+</ul>
+<h2 id="意向锁">意向锁</h2>
+<ul>
+<li>The main purpose of <em>IX</em> and <em>IS</em> locks is to show that someone is locking a row, or going to lock a row in the table.</li>
+<li>S and IX locks allow access by multiple clients. They won&rsquo;t  necessarily conflict until they try to get real locks on the same rows.But a table lock (ALTER TABLE, DROP TABLE, LOCK TABLES) blocks both IS and IX, and vice-versa。</li>
+<li>SELECT &hellip; FOR SHARE sets an IS lock, and SELECT &hellip; FOR UPDATE sets an IX lock.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>X</th>
+<th>IX</th>
+<th>S</th>
+<th>IS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Conflict</td>
+</tr>
+<tr>
+<td>IX</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Conflict</td>
+<td>Compatible</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Compatible</td>
+</tr>
+<tr>
+<td>IS</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Compatible</td>
+<td>Compatible</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>思考题
+<ul>
+<li>为什么要有意向锁？</li>
+<li>事务A和事务B都拿到了IX, 然后分别获取不同行的X锁，会死锁吗？</li>
+</ul>
+</li>
+</ul>
+<h1 id="一致性的非锁定读consistent-nonlocking-read">一致性的非锁定读（consistent nonlocking read）</h1>
+<p>在事务隔离级别 READ COMMIITTED 和 REPEATABLE READ ，InnoDB 通过行多版本并发控制（MVCC）的方式来读取数据库中的行数据，如果读取的行正在执行 DELETE 或 UPDATE 操作，这时读取操作不会去等待行上锁的释放。相反地，INNODB 存储引擎会去读取行的一个快照数据。</p>
+<ul>
+<li>快照数据是通过undo来实现的。</li>
+<li>快照数据不需要上锁，因为没有事务需要对历史数据修改。</li>
+<li>在 READ COMMITTED 事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据。</li>
+<li>在 REPEATABLE READ 事务隔离级别下，对于快照数据，非一致性读总是读取事务开始时的行数据版本。</li>
+</ul>
+<p><img src="./imags/innodb-snapshot.png" alt=""></p>
+<h1 id="一致性锁定读">一致性锁定读</h1>
+<ul>
+<li>SELECT… FOR UPDATE：对读取的行记录加一个 X 锁，其他事务不能对已锁定的行加上任何锁。</li>
+<li>SELECT… LOCK IN SHARE MODE：对读取的行记录加一个 S 锁，其他事务可以向被锁定的行加 S 锁，但是如果加 X 锁，则会被阻塞。</li>
+<li>必须在事务中，事务提交或者回顾，锁被释放。</li>
+<li>对于外键值的插入或更新，首先需要査询父表中的记录，即 SELECT 父表。但是对于父表的 SELECT 操作，不是使用一致性非锁定读的方式，因为这样会发生数据不一致的问题，因此这时使用的是 SELECT… LOCK IN SHARE MODE 方式，即主动对父表加一个 S 锁。如果这时父表上已经加 X 锁，子表上的操作会被阻塞。</li>
+</ul>
+<h1 id="行锁算法">行锁算法</h1>
+<h2 id="record-lock">Record Lock</h2>
+<p>单个行记录上的锁。Record Lock 总是会去锁住索引记录，如果 INNODB 存储引擎表在建立的时候没有设置任何一个索引，那么这时 INNODB 存储引擎会使用隐式的主键来进行锁定。</p>
+<h2 id="gap-lock">Gap Lock</h2>
+<p>间隙锁，锁定一个范围，但不包含记录本身。</p>
+<h2 id="next--key-lock">Next- Key Lock</h2>
+<p>Gap Lock+ Record Lock，锁定一个范围，并且锁定记录本身。</p>
+<p>例如，一个索引有 1，2，5这三个值，Next- Key Lock可锁定的区间为：(-∞，1], (1, 2], (2, 5], (5,+∞)。</p>
+<p>然而，当査询的索引含有唯一属性时，INNODB 存储引擎会对 Next- Key Lock 进行优化，将其降级为 Record Lock，即仅锁住索引本身，而不是范围。</p>
+<p>能避免Phantom Problem问题。</p>
+<h2 id="例1">例1</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-SQL" data-lang="SQL"><span style="color:#66d9ef">DROP</span> <span style="color:#66d9ef">TABLE</span> IE <span style="color:#66d9ef">EXISTS</span> t;
+
+<span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> t (a INT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span>);
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> t <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">1</span>;
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> t <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">2</span>;
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> t <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">5</span>;
+
+
+<span style="color:#f92672">//</span> <span style="color:#66d9ef">session</span> A
+
+<span style="color:#66d9ef">BEGIN</span>;
+
+<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> t <span style="color:#66d9ef">WHERE</span> a<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>; <span style="color:#f92672">//</span> <span style="color:#960050;background-color:#1e0010">仅锁定</span><span style="color:#ae81ff">5</span><span style="color:#960050;background-color:#1e0010">，而不是</span>(<span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">5</span>]
+
+<span style="color:#66d9ef">COMMIT</span>;
+
+<span style="color:#f92672">//</span> <span style="color:#66d9ef">session</span> B
+
+<span style="color:#66d9ef">BEGIN</span>;
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> t <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">4</span>;
+
+<span style="color:#66d9ef">COMMIT</span>; <span style="color:#f92672">//</span><span style="color:#960050;background-color:#1e0010">成功，不需要等待</span>
+</code></pre></div><h2 id="例2">例2</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-SQL" data-lang="SQL"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> z (a INT, b INT, <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (a), <span style="color:#66d9ef">KEY</span> (b) );
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>;
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">1</span>;
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">5</span>,<span style="color:#ae81ff">3</span>;
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">6</span>; 
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">8</span>;
+
+
+
+<span style="color:#f92672">//</span> <span style="color:#66d9ef">session</span> A
+
+<span style="color:#f92672">//</span> <span style="color:#960050;background-color:#1e0010">需要分别锁定两个索引，对于聚集索引，加上</span>Record <span style="color:#66d9ef">Lock</span>, <span style="color:#960050;background-color:#1e0010">对于辅助索引，加上</span><span style="color:#66d9ef">Next</span><span style="color:#f92672">-</span><span style="color:#66d9ef">Key</span> <span style="color:#66d9ef">Lock</span>, 
+
+<span style="color:#f92672">//</span> (<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">3</span>]<span style="color:#960050;background-color:#1e0010">。</span>InnoDB <span style="color:#960050;background-color:#1e0010">还会对辅助索引加一个</span>Gap <span style="color:#66d9ef">Lock</span>, <span style="color:#960050;background-color:#1e0010">（</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">6</span>)<span style="color:#960050;background-color:#1e0010">。</span>
+
+<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> z <span style="color:#66d9ef">where</span> b<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">UPDATE</span>;
+
+
+
+<span style="color:#f92672">//</span> <span style="color:#66d9ef">session</span> B
+
+<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">FROM</span> z <span style="color:#66d9ef">WHERE</span> a<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> <span style="color:#66d9ef">SHARE</span> <span style="color:#66d9ef">MODE</span>; <span style="color:#f92672">//</span> <span style="color:#960050;background-color:#1e0010">被阻塞</span>
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">4</span>,<span style="color:#ae81ff">2</span>; <span style="color:#f92672">//</span> <span style="color:#960050;background-color:#1e0010">被阻塞</span>
+
+<span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> z <span style="color:#66d9ef">SELECT</span> <span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">5</span>; <span style="color:#f92672">//</span> <span style="color:#960050;background-color:#1e0010">被阻塞</span>
+</code></pre></div><p>思考题：</p>
+<ul>
+<li>为什么要加（3，6）的Gap Lock?</li>
+</ul>
+<h1 id="解决更新丢失问题">解决更新丢失问题</h1>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读取账户100元</td>
+<td>读取账户100元</td>
+</tr>
+<tr>
+<td>转账99元</td>
+<td></td>
+</tr>
+<tr>
+<td>commit</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>转账1元，结果还剩下99元</td>
+</tr>
+<tr>
+<td></td>
+<td>commit</td>
+</tr>
+</tbody>
+</table>
+<p>串行执行，在事务读账户余额是加X锁（SELECT… FOR UPDATE）。</p>
+<h1 id="参考资料">参考资料</h1>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks">mysql官网</a></p>
+<p>《MySQL技术内幕(InnoDB存储引擎)第2版》</p>
+
+  </div>
+
+  <footer class="post-footer">
+    
+
+    
+
+    
+    
+  </footer>
+  
+</article>
+
+</body>
+  
+
+
+
+</html>
