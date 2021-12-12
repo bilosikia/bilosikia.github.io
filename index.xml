@@ -6,7 +6,26 @@
     <description>Recent content on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 23 Nov 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Dec 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>tokio-概览篇</title>
+      <link>https://bilosikia.github.io/posts/rust/tokio/tokio-%E6%A6%82%E8%A7%88%E7%AF%87/</link>
+      <pubDate>Sun, 12 Dec 2021 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/tokio/tokio-%E6%A6%82%E8%A7%88%E7%AF%87/</guid>
+      <description>runtime 构成   Task:
+runtime 每 spawn 一个异步函数就会产生一个 Task。Task 是 runtime 的调度单元，每个 Task 包含需要执行的 Future 和状态信息。
+  Excutor：
+用来执行，管理，调度 Task，包含线程池，每个线程被抽象为一个 Worker。
+  Driver:
+Task 的执行，需要 await 的地方通常是 IO，Timer等，需要依赖外部状态的改变。当外部状态改变时，Task 需要被重新调度，Driver 用于驱动 Task 的状态变更。
+Driver 对应传统的 Reator 模型，只是不仅仅包含 IO, 还包含 Timer，Signal 等。
+  Waker：
+属于 Task 的一部分，用于关联 Driver 和 Exuctor。当 Driver 任务 Task 就绪可以被重新调度时，通过 Waker 唤醒任务。
+Waker 将 Driver 和 Excutor 解耦。
+  rust 只定义了异步运行时的接口，即 Future 和 Waker。runtime 按照定义的规范实现个组件之间的协作。</description>
+    </item>
+    
     <item>
       <title>async fn memory layout</title>
       <link>https://bilosikia.github.io/posts/rust/async-fn-memory-layout/</link>
