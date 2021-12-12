@@ -80,7 +80,7 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
       <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
   n &amp;amp; -n returns the rightmost 1 bit in n.
   n &amp;amp; (n - 1) 消除最右 1
-  X % 2^n = X &amp;amp; (2^n - 1)，环形队列实现
+  X % 2^n = X &amp;amp; (2^n - 1)，环形队列，时间轮实现
   GUARDED_BY
   容器元素比较：严格弱序
   s.size() - 10 的结果是无符号

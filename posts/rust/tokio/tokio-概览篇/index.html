@@ -78,23 +78,25 @@
 <p>tokio 提供了实现了 Future 的 IO 对象，Sockets，mutext，Channel等。</p>
 <h1 id="excutor--waker--driver-的协作">Excutor , Waker,  Driver 的协作</h1>
 <p>Excutor 由 thread-pool 构成，每一个执行线程对应一个 Worker。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">if</span> worker <span style="color:#960050;background-color:#1e0010">有</span> Notified <span style="color:#960050;background-color:#1e0010">的</span> Task {
-	 	<span style="color:#960050;background-color:#1e0010">处理</span> Notified Task
-} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#960050;background-color:#1e0010">是否可以从其他</span> worker <span style="color:#960050;background-color:#1e0010">中</span> steal Task {
-	 	steal Task <span style="color:#960050;background-color:#1e0010">并处理</span>
-} <span style="color:#66d9ef">else</span> {
-     <span style="color:#960050;background-color:#1e0010">调用</span> Driver <span style="color:#960050;background-color:#1e0010">的</span> <span style="color:#960050;background-color:#1e0010">`</span>park<span style="color:#960050;background-color:#1e0010">`，`</span>park_timeout<span style="color:#960050;background-color:#1e0010">`，</span>park <span style="color:#960050;background-color:#1e0010">将调用</span> Reator poll<span style="color:#960050;background-color:#1e0010">。</span>
-     <span style="color:#66d9ef">if</span> <span style="color:#960050;background-color:#1e0010">如果有就绪的</span> IO <span style="color:#960050;background-color:#1e0010">事件</span> {
-        <span style="color:#960050;background-color:#1e0010">调用</span> Task <span style="color:#960050;background-color:#1e0010">的</span> waker<span style="color:#960050;background-color:#1e0010">，</span> <span style="color:#960050;background-color:#1e0010">将</span> Task <span style="color:#960050;background-color:#1e0010">推入执行队列，</span>excutor <span style="color:#960050;background-color:#1e0010">从</span> park <span style="color:#960050;background-color:#1e0010">中返回，并执行</span> Task
-     } <span style="color:#66d9ef">else</span> {
-       <span style="color:#960050;background-color:#1e0010">阻塞等待</span> Ready <span style="color:#960050;background-color:#1e0010">事件</span>
+<pre tabindex="0"><code>if worker 有 Notified 的 Task {
+	处理 Notified Task
+} else if 是否可以从其他 worker 中 steal Task {
+	steal Task 并处理
+} else {
+	调用 Driver 的 `park`，`park_timeout`，park 将调用 Reator poll。
+    if 如果有就绪的 IO 事件 {
+       	调用 Task 的 waker， 将 Task 推入执行队列，excutor 从 park 中返回，并执行 Task
+    } else {
+       	阻塞等待 Ready 事件
     }
 }
-</code></pre></div><p>不同于传统的 Reactor 模型，由一个单独的线程监听 Ready 事件，并分发到线程池。tokio 的所有 worker 职责是一样的，都会 poll reactor。</p>
+</code></pre><p>不同于传统的 Reactor 模型，由一个单独的线程监听 Ready 事件，并分发到线程池。tokio 的所有 worker 职责是一样的，都会 poll reactor。</p>
 <p>Reactor 只有在被 poll 时，才会有执行 Driver 相关代码的机会，如果 Worker 的 run queue 有足够多的 Task 待执行，即便 Driver 注册的事件 Ready，也不会立马被推入可执行队列。</p>
+<p>​</p>
 <p>当 Driver 被 poll 时，通过调用注册事件关联的 Waker 的 waker 函数，再通过 waker 关联的 Task，将 Task 放回执行者队列。</p>
 <p>对 Driver 来说，并不需要关心如何将 Task 加入执行者队列，具体实现由 Waker 定义的虚函数实现。</p>
 <p>Waker 是 Task 流转的关键点。</p>
+<p>​</p>
 <p>Excutor 和 Driver 之间的协作，则通过定义了 Park Trait，Park Trait 抽象了 poll 模型。Driver 实现 Park，Excutor 调用相关函数，驱动 Driver 的事件被消费。在消费的过程中，使用 Waker 封装消费细节。</p>
 <h1 id="driver-的层级关系">Driver 的层级关系</h1>
 <p>在 tokio 的实现中，IO，Timer，Signal 等都有自己的 Driver，不同的类型的 Driver 是否启用是可配置的。</p>
