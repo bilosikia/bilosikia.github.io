@@ -6,7 +6,18 @@
     <description>Recent content in Posts on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 12 Dec 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 19 Dec 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>tokio-异步基础类型</title>
+      <link>https://bilosikia.github.io/posts/rust/tokio/tokio-%E5%BC%82%E6%AD%A5%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Sun, 19 Dec 2021 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/tokio/tokio-%E5%BC%82%E6%AD%A5%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/</guid>
+      <description>为了适配 async 模型，tokio 重新实现了标准库中的 fs，net，channel 等模块，提供想对应的 async 方法。
+本文以 TcpListener 为例，剖析 tokio 如何实现异步版本的 TcpListener，以及如何与 Reactor 整合。
+数据结构关系-自顶向下 pub struct TcpListener { io: PollEvented&amp;lt;mio::net::TcpListener&amp;gt;, } // 表示一个与 Reactor 关联的 IO 资源 pub(crate) struct PollEvented&amp;lt;E: Source&amp;gt; { io: Option&amp;lt;E&amp;gt;, registration: Registration, } // 表示一个已经注册到了 Reactor Io 资源 // handle 表示注册的 Reactor Driver handle // shared 表示注册的 Io 相关信息引用，可用了观测 IO 状态 pub(crate) struct Registration { /// Handle to the associated driver.  handle: Handle, /// Reference to state stored by the driver.</description>
+    </item>
+    
     <item>
       <title>tokio-概览篇</title>
       <link>https://bilosikia.github.io/posts/rust/tokio/tokio-%E6%A6%82%E8%A7%88%E7%AF%87/</link>
