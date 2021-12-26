@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://bilosikia.github.io/</loc>
-    <lastmod>2021-12-19T14:55:59+08:00</lastmod>
+    <lastmod>2021-12-26T14:55:59+08:00</lastmod>
   </url><url>
     <loc>https://bilosikia.github.io/posts/</loc>
-    <lastmod>2021-12-19T14:55:59+08:00</lastmod>
+    <lastmod>2021-12-26T14:55:59+08:00</lastmod>
+  </url><url>
+    <loc>https://bilosikia.github.io/posts/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/</loc>
+    <lastmod>2021-12-26T14:55:59+08:00</lastmod>
   </url><url>
     <loc>https://bilosikia.github.io/posts/rust/tokio/tokio-%E5%BC%82%E6%AD%A5%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/</loc>
     <lastmod>2021-12-19T14:55:59+08:00</lastmod>

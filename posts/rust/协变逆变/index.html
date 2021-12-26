@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Hugo 0.91.2" />
+  <title> 协变&amp;逆变 | bilosikia </title>
+  <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/">
+  <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
+  
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+  
+</head>
+<body class="container">
+  <nav class="navigation">
+  <div class="nav-left">
+    
+    <a href="https://bilosikia.github.io/">bilosikia</a>
+    
+    <div class="nav-item nav-title">
+      <a href="https://bilosikia.github.io/"> bilosikia</a>
+    </div>
+    <div class="nav-item nav-menu">
+      
+    </div>
+  </div>
+  <div class="nav-item nav-right fontawesome">
+    
+    
+    
+  </div>
+</nav>
+
+  
+<article class="post">
+  <header class="post-header">
+    <h1 style="text-align: center;" >协变&amp;逆变</h1>
+    <div class="post-metadata">
+    
+      <time datetime="2021-12-26T14:55:59&#43;08:00">December 26, 2021</time> &nbsp; 
+    
+    
+    
+    
+    
+    
+    </div>
+  </header>
+
+  
+
+  <div class="post-text">
+    <h1 id="mutt-invariance"><code>&amp;mutT</code> invariance</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">evil_feeder</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>(input: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">mut</span> T, val: <span style="color:#a6e22e">T</span>) {
+    <span style="color:#f92672">*</span>input <span style="color:#f92672">=</span> val;
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> mr_snuggles: <span style="color:#66d9ef">&amp;</span><span style="color:#f92672">&#39;</span>static <span style="color:#66d9ef">str</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;meow! :3&#34;</span>;  <span style="color:#75715e">// mr. snuggles forever!!
+</span><span style="color:#75715e"></span>    {
+        <span style="color:#66d9ef">let</span> spike <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;bark! &gt;:V&#34;</span>);
+        <span style="color:#66d9ef">let</span> spike_str: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>spike;                <span style="color:#75715e">// Only lives for the block
+</span><span style="color:#75715e"></span>        evil_feeder(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> mr_snuggles, spike_str);    <span style="color:#75715e">// EVIL!
+</span><span style="color:#75715e"></span>    }
+    println!(<span style="color:#e6db74">&#34;{}&#34;</span>, mr_snuggles);                     <span style="color:#75715e">// Use after free?
+</span><span style="color:#75715e"></span>}
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">error[E0597]: <span style="color:#960050;background-color:#1e0010">`</span>spike<span style="color:#960050;background-color:#1e0010">`</span> does not live long enough
+  <span style="color:#f92672">-</span>-&gt; <span style="color:#a6e22e">src</span><span style="color:#f92672">/</span>main.rs:<span style="color:#ae81ff">9</span>:<span style="color:#ae81ff">31</span>
+   <span style="color:#f92672">|</span>
+<span style="color:#ae81ff">6</span>  <span style="color:#f92672">|</span>     <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> mr_snuggles: <span style="color:#66d9ef">&amp;</span><span style="color:#f92672">&#39;</span>static <span style="color:#66d9ef">str</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;meow! :3&#34;</span>;  <span style="color:#75715e">// mr. snuggles forever!!
+</span><span style="color:#75715e"></span>   <span style="color:#f92672">|</span>                          <span style="color:#f92672">------------</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">annotation</span> requires that <span style="color:#960050;background-color:#1e0010">`</span>spike<span style="color:#960050;background-color:#1e0010">`</span> is borrowed <span style="color:#66d9ef">for</span> <span style="color:#960050;background-color:#1e0010">`</span><span style="color:#f92672">&#39;</span>static<span style="color:#960050;background-color:#1e0010">`</span>
+<span style="color:#f92672">..</span>.
+<span style="color:#ae81ff">9</span>  <span style="color:#f92672">|</span>         <span style="color:#66d9ef">let</span> spike_str: <span style="color:#66d9ef">&amp;</span><span style="color:#66d9ef">str</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>spike;                <span style="color:#75715e">// Only lives for the block
+</span><span style="color:#75715e"></span>   <span style="color:#f92672">|</span>                               <span style="color:#f92672">^^^^^^</span> borrowed value does not live long enough
+<span style="color:#ae81ff">10</span> <span style="color:#f92672">|</span>         evil_feeder(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> mr_snuggles, spike_str);    <span style="color:#75715e">// EVIL!
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">11</span> <span style="color:#f92672">|</span>     }
+   <span style="color:#f92672">|</span>     <span style="color:#f92672">-</span> <span style="color:#960050;background-color:#1e0010">`</span>spike<span style="color:#960050;background-color:#1e0010">`</span> dropped here <span style="color:#66d9ef">while</span> still borrowed
+</code></pre></div><p>由于<code>&amp;mutT</code> invariance, 因此  T 一定被编译器推导为 <code>&amp;mut &amp;'static str</code>, 要使 evil_feeder 函数编译，T 的类型也只能是 &amp;&lsquo;static str，</p>
+<p>显然不成立。</p>
+<h1 id="nonnullt-协变"><code>NonNull&lt;T&gt;</code> 协变</h1>
+<p>不同意 <code>&amp;mut T</code>,  <code>NoneNull&lt;T&gt;</code> 是协变的，在使用时，必须要由使用者保证不会将指针指向更短生命周期的变量。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">test_non_null</span>() {
+	<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">overwrite</span><span style="color:#f92672">&lt;&#39;</span><span style="color:#a6e22e">a</span><span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">mut</span> _big_str: <span style="color:#a6e22e">NonNull</span><span style="color:#f92672">&lt;&amp;&#39;</span><span style="color:#a6e22e">a</span> <span style="color:#66d9ef">str</span><span style="color:#f92672">&gt;</span>, _small_str: <span style="color:#66d9ef">&amp;&amp;</span><span style="color:#f92672">&#39;</span><span style="color:#a6e22e">a</span> <span style="color:#66d9ef">str</span>) {
+		<span style="color:#66d9ef">unsafe</span> {<span style="color:#f92672">*</span>_big_str.as_mut() <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>_small_str;}
+	}
+
+	<span style="color:#66d9ef">let</span> hello <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello&#34;</span>;
+	<span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> big_str: <span style="color:#66d9ef">&amp;</span><span style="color:#f92672">&#39;</span>static <span style="color:#66d9ef">str</span> <span style="color:#f92672">=</span> hello;
+	<span style="color:#f92672">&#39;</span><span style="color:#a6e22e">small</span>: {
+		<span style="color:#66d9ef">let</span> small_str <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;world&#34;</span>);
+		<span style="color:#66d9ef">let</span> p1: <span style="color:#a6e22e">NonNull</span><span style="color:#f92672">&lt;&amp;&#39;</span>static <span style="color:#66d9ef">str</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span> NonNull::new(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> big_str).unwrap();
+		overwrite(p1, <span style="color:#f92672">&amp;&amp;*</span>small_str);
+	}
+	println!(<span style="color:#e6db74">&#34;output: {}&#34;</span>, big_str);
+}
+<span style="color:#75715e">// 并不会输出 wolrd
+</span></code></pre></div><p>什么时候使用 <code>NonNull</code>?</p>
+<ol>
+<li>优化内存大小，NonNull 可以 Null pointer optimization，<code>size_of::&lt;NonNull&lt;i64&gt;&gt;() == size_of::&lt;Option&lt;NonNull&lt;i64&gt;&gt;&gt;()</code></li>
+<li>类型需要提供协变</li>
+</ol>
+<h1 id="cell-invariance">Cell invariance</h1>
+<p>如下的代码能正常编译，但结果如我们所料，是一个未定义的值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyCell</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+    value: <span style="color:#a6e22e">T</span>
+}
+
+<span style="color:#66d9ef">impl</span><span style="color:#f92672">&lt;</span>T: Copy<span style="color:#f92672">&gt;</span> MyCell<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">new</span>(value: <span style="color:#a6e22e">T</span>) -&gt; <span style="color:#a6e22e">Self</span> {
+        MyCell { value }
+    }
+    
+    <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">set</span>(<span style="color:#f92672">&amp;</span>self, new_value: <span style="color:#a6e22e">T</span>) {
+        <span style="color:#66d9ef">unsafe</span> { std::ptr::write(<span style="color:#f92672">&amp;</span>self.value <span style="color:#66d9ef">as</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">const</span> T <span style="color:#66d9ef">as</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">mut</span> T, new_value); 
+    }
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">foo</span>(rcell: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">MyCell</span><span style="color:#f92672">&lt;&amp;</span><span style="color:#66d9ef">i32</span><span style="color:#f92672">&gt;</span>) { 
+    <span style="color:#66d9ef">let</span> val: <span style="color:#66d9ef">i32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">13</span>;
+    rcell.set(<span style="color:#f92672">&amp;</span>val);
+    println!(<span style="color:#e6db74">&#34;foo set value: {}&#34;</span>, rcell.value);
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">static</span> X: <span style="color:#66d9ef">i32</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+    <span style="color:#66d9ef">let</span> cell <span style="color:#f92672">=</span> MyCell::new(<span style="color:#f92672">&amp;</span>X);
+    foo(<span style="color:#f92672">&amp;</span>cell);
+    println!(<span style="color:#e6db74">&#34;end value: {}&#34;</span>, cell.value);
+}
+    
+<span style="color:#75715e">// foo set value: 13
+</span><span style="color:#75715e">// end value: 0
+</span></code></pre></div><p>如果将 <code>MyCell</code> 替换成 <code>Cell</code>， 将无法编译，这看上去才是我们期望的行为。</p>
+<p>问题是：</p>
+<ol>
+<li>为什么 <code>MyCell </code>的代码能编译？</li>
+<li><code>MyCell</code> 与 <code>Cell</code> 有和区别？</li>
+</ol>
+<p>第一个问题，按照自定义类型的 variance，<code>MyCell&lt;T&gt;</code> 协变于 T。假设 val 的生命周期为 &lsquo;a, cell 的生命周期为 &lsquo;b，显然 &lsquo;b &gt; &lsquo;a。</p>
+<p>调用 set 函数时，&lsquo;a Self 可以协变为 &lsquo;b Self, 故能够正常编译（self 参数协变）。</p>
+<p>在设计 <code>Cell</code> 类型时，由于可以改变内部值，需要将 variance 限制为 invariance, 避免暴露的接口出现未定义行为。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyCell</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+    value: <span style="color:#a6e22e">T</span>,
+    _marker: <span style="color:#a6e22e">PhantomData</span><span style="color:#f92672">&lt;</span>Cell<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span>,
+}
+</code></pre></div><p>第二个问题，<code>unsafe_cell</code> 由编译器内部实现了 <code>invariance</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Cell</span><span style="color:#f92672">&lt;</span>T: <span style="color:#f92672">?</span>Sized<span style="color:#f92672">&gt;</span> {
+    value: <span style="color:#a6e22e">UnsafeCell</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>,
+}
+<span style="color:#75715e">#[lang = </span><span style="color:#e6db74">&#34;unsafe_cell&#34;</span><span style="color:#75715e">]</span> <span style="color:#75715e">// --&gt; known to the compiler
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">UnsafeCell</span><span style="color:#f92672">&lt;</span>T: <span style="color:#f92672">?</span>Sized<span style="color:#f92672">&gt;</span> {
+    value: <span style="color:#a6e22e">T</span>,
+}
+</code></pre></div><h1 id="referrences">referrences</h1>
+<ul>
+<li>
+<p><a href="https://doc.rust-lang.org/nomicon/subtyping.html">https://doc.rust-lang.org/nomicon/subtyping.html</a></p>
+</li>
+<li>
+<p><a href="https://ehsanmkermani.com/2019/03/16/variance-in-rust-an-intuitive-explanation/">https://ehsanmkermani.com/2019/03/16/variance-in-rust-an-intuitive-explanation/</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/42756635">https://zhuanlan.zhihu.com/p/42756635</a></p>
+</li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    
+
+    
+
+    
+    
+  </footer>
+  
+</article>
+
+</body>
+  
+
+
+
+</html>

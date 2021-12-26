@@ -6,7 +6,16 @@
     <description>Recent content in Posts on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 19 Dec 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 26 Dec 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>协变&amp;逆变</title>
+      <link>https://bilosikia.github.io/posts/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/</link>
+      <pubDate>Sun, 26 Dec 2021 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/</guid>
+      <description>&amp;amp;mutT invariance fn evil_feeder&amp;lt;T&amp;gt;(input: &amp;amp;mut T, val: T) { *input = val; } fn main() { let mut mr_snuggles: &amp;amp;&amp;#39;static str = &amp;#34;meow! :3&amp;#34;; // mr. snuggles forever!!  { let spike = String::from(&amp;#34;bark! &amp;gt;:V&amp;#34;); let spike_str: &amp;amp;str = &amp;amp;spike; // Only lives for the block  evil_feeder(&amp;amp;mut mr_snuggles, spike_str); // EVIL!  } println!(&amp;#34;{}&amp;#34;, mr_snuggles); // Use after free? } error[E0597]: `spike` does not live long enough --&amp;gt; src/main.rs:9:31 | 6 | let mut mr_snuggles: &amp;amp;&amp;#39;static str = &amp;#34;meow!</description>
+    </item>
+    
     <item>
       <title>tokio-异步基础类型</title>
       <link>https://bilosikia.github.io/posts/rust/tokio/tokio-%E5%BC%82%E6%AD%A5%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/</link>
