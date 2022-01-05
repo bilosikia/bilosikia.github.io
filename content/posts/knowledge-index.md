@@ -8,6 +8,7 @@ date: 2021-06-09T14:55:59+08:00
 - [再谈 slab](https://zhuanlan.zhihu.com/p/61457076)
 - 伙伴算法
 - [Socket write & read](https://www.cnblogs.com/junneyang/p/6126635.html)
+- [seq锁](https://zhuanlan.zhihu.com/p/364044850)
 
 # c++
 
@@ -68,9 +69,15 @@ date: 2021-06-09T14:55:59+08:00
   
 - [fat pointer](https://guihao-liang.github.io/2020/06/06/fat-pointer) 
 
+- [Dynamic Dispatch in Rust](https://alschwalm.com/blog/static/2017/03/07/exploring-dynamic-dispatch-in-rust/)
+
 - [Higher-Rank Trait Bounds](https://zhuanlan.zhihu.com/p/404574814)
 
 - [generator 内存优化](https://tmandry.gitlab.io/blog/posts/optimizing-await-1/)
+
+- Trait 不仅可以包含 type 和 function，还可以包含常量
+
+  
 
 # 网络
 
