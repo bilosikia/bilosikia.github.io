@@ -97,7 +97,7 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/knowledge-index/</guid>
-      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
+      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read seq锁  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
   n &amp;amp; -n returns the rightmost 1 bit in n.
   n &amp;amp; (n - 1) 消除最右 1
   X % 2^n = X &amp;amp; (2^n - 1)，环形队列，时间轮实现
@@ -184,6 +184,15 @@ during the transition
       <guid>https://bilosikia.github.io/posts/raft/servehttpkvapi/</guid>
       <description>serveHttpKVAPI store.proposeC -&amp;gt; raft.node.propc
  put  store.Propose  s.proposeC &amp;lt;- buf.String()  prop, ok := &amp;lt;-rc.proposeC  rc.node.Propose(context.TODO(), []byte(prop))  stepWait  n.propc &amp;lt;- pm  pm := &amp;lt;-propc:  r.Step(m)  r.step(r, m)  r.appendEntry(m.Entries&amp;hellip;) r.bcastAppend()   newPipelineHandler   h.r.Process(context.TODO(), m)   Raftnode.process   rc.node.Step(ctx, m)   n.recvc &amp;lt;- m:   r.Step(m)   n.rn.HasReady()   readyc &amp;lt;- rd:   rd := &amp;lt;-rc.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/rust/rust-micro-scope/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/rust-micro-scope/</guid>
+      <description></description>
     </item>
     
     <item>
