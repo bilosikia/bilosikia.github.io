@@ -9,6 +9,8 @@ date: 2021-06-09T14:55:59+08:00
 - 伙伴算法
 - [Socket write & read](https://www.cnblogs.com/junneyang/p/6126635.html)
 - [seq锁](https://zhuanlan.zhihu.com/p/364044850)
+- [惊群效应](https://blog.csdn.net/lyztyycode/article/details/78648798)
+- [BBR](https://www.bilibili.com/video/BV1h64y1x72H?spm_id_from=333.999.0.0)
 
 # c++
 
@@ -89,3 +91,10 @@ date: 2021-06-09T14:55:59+08:00
 
 - [package和文件夹的关系](https://www.zhihu.com/question/60426831)
 - [Go包初始化顺序](https://zhuanlan.zhihu.com/p/183044306)
+
+
+
+# 分布式
+
+- [分布式系统一致性的发展历史](https://danielw.cn/history-of-distributed-systems-1)
+- 
