@@ -97,7 +97,7 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/knowledge-index/</guid>
-      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read seq锁 惊群效应   c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
+      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read seq锁 惊群效应 BBR  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
   n &amp;amp; -n returns the rightmost 1 bit in n.
   n &amp;amp; (n - 1) 消除最右 1
   X % 2^n = X &amp;amp; (2^n - 1)，环形队列，时间轮实现
@@ -145,6 +145,15 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
       
       <guid>https://bilosikia.github.io/posts/etcd-raft/</guid>
       <description>etcd raft </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/qa/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/qa/</guid>
+      <description>DB  自增主键和 uuid  </description>
     </item>
     
     <item>
