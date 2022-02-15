@@ -79,7 +79,7 @@ date: 2021-06-09T14:55:59+08:00
 
 - Trait 不仅可以包含 type 和 function，还可以包含常量
 
-  
+- [&'static T vs T: 'static](https://doc.rust-lang.org/rust-by-example/scope/lifetime/static_lifetime.html)
 
 # 网络
 
