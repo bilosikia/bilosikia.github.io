@@ -80,7 +80,7 @@
 </code></pre></div><p>由于<code>&amp;mutT</code> invariance, 因此  T 一定被编译器推导为 <code>&amp;mut &amp;'static str</code>, 要使 evil_feeder 函数编译，T 的类型也只能是 &amp;&lsquo;static str，</p>
 <p>显然不成立。</p>
 <h1 id="nonnullt-协变"><code>NonNull&lt;T&gt;</code> 协变</h1>
-<p>不同意 <code>&amp;mut T</code>,  <code>NoneNull&lt;T&gt;</code> 是协变的，在使用时，必须要由使用者保证不会将指针指向更短生命周期的变量。</p>
+<p>不同于 <code>&amp;mut T</code>,  <code>NoneNull&lt;T&gt;</code> 是协变的，在使用时，必须要由使用者保证不会将指针指向更短生命周期的变量。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">test_non_null</span>() {
 	<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">overwrite</span><span style="color:#f92672">&lt;&#39;</span><span style="color:#a6e22e">a</span><span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">mut</span> _big_str: <span style="color:#a6e22e">NonNull</span><span style="color:#f92672">&lt;&amp;&#39;</span><span style="color:#a6e22e">a</span> <span style="color:#66d9ef">str</span><span style="color:#f92672">&gt;</span>, _small_str: <span style="color:#66d9ef">&amp;&amp;</span><span style="color:#f92672">&#39;</span><span style="color:#a6e22e">a</span> <span style="color:#66d9ef">str</span>) {
 		<span style="color:#66d9ef">unsafe</span> {<span style="color:#f92672">*</span>_big_str.as_mut() <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>_small_str;}
