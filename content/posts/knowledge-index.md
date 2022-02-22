@@ -81,6 +81,8 @@ date: 2021-06-09T14:55:59+08:00
 
 - [&'static T vs T: 'static](https://doc.rust-lang.org/rust-by-example/scope/lifetime/static_lifetime.html)
 
+- MutexGuard !send but sync
+
 # 网络
 
 - [layer 4负载均衡](https://www.nginx.com/resources/glossary/layer-4-load-balancing/)
