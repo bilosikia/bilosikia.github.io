@@ -100,3 +100,9 @@ date: 2021-06-09T14:55:59+08:00
 
 - [分布式系统一致性的发展历史](https://danielw.cn/history-of-distributed-systems-1)
 - 
+
+# 其他
+
+- [np问题](http://www.matrix67.com/blog/)
+- [大佬的总结](https://tanxinyu.work/2021-annual-summary/)
+  - 一位清华大佬的年终总结，总结了本科到研三的学习经历，一些值得学习的经验思考。能从文章中看到优秀的人是如何学习，如何安排自己时间，如果规划工作的，总结部分能引起强烈共鸣。
