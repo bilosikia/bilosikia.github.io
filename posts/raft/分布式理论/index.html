@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Hugo 0.94.2" />
+  <title>  | bilosikia </title>
+  <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/raft/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">
+  <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
+  
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+  
+</head>
+<body class="container">
+  <nav class="navigation">
+  <div class="nav-left">
+    
+    <a href="https://bilosikia.github.io/">bilosikia</a>
+    
+    <div class="nav-item nav-title">
+      <a href="https://bilosikia.github.io/"> bilosikia</a>
+    </div>
+    <div class="nav-item nav-menu">
+      
+    </div>
+  </div>
+  <div class="nav-item nav-right fontawesome">
+    
+    
+    
+  </div>
+</nav>
+
+  
+<article class="post">
+  <header class="post-header">
+    <h1 style="text-align: center;" ></h1>
+    <div class="post-metadata">
+    
+    
+    
+    
+    
+    
+    </div>
+  </header>
+
+  
+
+  <div class="post-text">
+    <h1 id="一致性">一致性</h1>
+<ul>
+<li>
+<h2 id="strict-consistency">strict consistency</h2>
+</li>
+<li>Linearizability(strong consistency)
+<ul>
+<li>当事件之间没有重叠， Linearizability必须给出明确的先后顺序</li>
+<li>A写入了x结束后, 接下来B一定能读出来x</li>
+</ul>
+</li>
+<li>Sequential consistency
+<ul>
+<li>第一是事件历史在各个进程上看全局一致,</li>
+<li>第二是单个进程的事件历史在全局历史上符合程序顺序<a href="https://danielw.cn/program-order-in-distributed-systems">program order</a>.</li>
+</ul>
+</li>
+<li>weak ordering
+<ul>
+<li>硬件约定CPU reordering不能跨越fence，而软件负责插入fence</li>
+<li>尽管论文里也是把Weak Ordering作为一种consistency model来讲的，但是我觉得他其实算不上，他只能算是一个工程实现的模式</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    
+
+    
+
+    
+    
+  </footer>
+  
+</article>
+
+</body>
+  
+
+
+
+</html>

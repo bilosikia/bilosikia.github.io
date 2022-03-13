@@ -162,13 +162,14 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bilosikia.github.io/posts/raft/learder-%E9%80%89%E4%B8%BE/</guid>
-      <description>learder 选举   只投票给比自己新的节点
- 选举前，增加自己的 term 发起投票的节点， term 大于等于当前节点 term（第三条包含） 发起投票的节点，log 要新(Up-to-date)  log中的 term 谁大谁更新 term 号相同时，logid 越大越新 注意，比较的是当前 log 中的term，并不是current_term      一个任期只投票给一个节点
-  随机超时
-  被隔离的节点，term 号变得极大
- 导致重新选主，影响可用性 预选举 + 其他节点同意发起重新选举的条件更严格  没有收到 Leader 的心跳，即至少有一次选举超时 Candidate 日志足够新 因此无法增加 term，重新加入集群时不会导致重新选主      转为 follower, 只要有新leader term 号至少和自己的 term 号一样大
-  Election Safety Property
-  疑问：</description>
+      <description>为什么一般为奇数个节点  方便投票，避免均衡投票 奇数节点增加一个节点，并不能提高节点容错。3 个节点，允许一个接口挂掉，4 个节点时，也只能允许一个节点挂掉。  如何判断发起vote请求的节点log至少和当前一样新  log中的 term 谁大谁更新 term 号相同时，logid 越大越新  注意比较的是当前 log 中的term，并不是 currentTerm。但如果发起方 term 比当前低，直接拒绝。如果比当前新，不管是否投票，都要更新 term 号。
+为什么需要预选举，以及是怎么工作的 为什么需要：
+只要 rpc 请求方的 term 号更大，不管当前是什么角色，都会转为 follower。被隔离的节点发起 vote 会不断的增加 term 号，导致重新选主。
+如何工作：
+ baseline election timeout 内每一收到过 Leader 心跳 Candidate 日志足够新  因此无法增加 term，重新加入集群时不会导致重新选主
+为什么 term 号只能单调递增？ 为什么收到 vote，append（包括心跳）时，如果 term 号比当前大，要更新 term 号呢？
+如果是 vote，如果判断发起节点 log 比当前旧，不会赞成投票，为什么还需要更新 term 号呢？
+ term 和 logid 能唯一标志一条 log，故 term 只能是单调递增 append 请求，没法判断发起节点 log 是否比当前旧，故只能被动更新 term 不用记录 term 更低的投票，因为他们不可能赢得选举 选举期间，如果有更高 term 直接转为 follower，即便曾经的 vote 请求得到了多数的赞成，可以直接当做选举失败处理。  另外，预选举由于请求的 term 号没有增加，不会让其他节点更新 term。</description>
     </item>
     
     <item>
@@ -192,6 +193,45 @@ during the transition
       <guid>https://bilosikia.github.io/posts/raft/servehttpkvapi/</guid>
       <description>serveHttpKVAPI store.proposeC -&amp;gt; raft.node.propc
  put  store.Propose  s.proposeC &amp;lt;- buf.String()  prop, ok := &amp;lt;-rc.proposeC  rc.node.Propose(context.TODO(), []byte(prop))  stepWait  n.propc &amp;lt;- pm  pm := &amp;lt;-propc:  r.Step(m)  r.step(r, m)  r.appendEntry(m.Entries&amp;hellip;) r.bcastAppend()   newPipelineHandler   h.r.Process(context.TODO(), m)   Raftnode.process   rc.node.Step(ctx, m)   n.recvc &amp;lt;- m:   r.Step(m)   n.rn.HasReady()   readyc &amp;lt;- rd:   rd := &amp;lt;-rc.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/raft/untitled/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/raft/untitled/</guid>
+      <description>q: 实现了哪种一致性
+a: 顺序一致性
+leader 选举
+选举条件：
+只有拥有最新的已提交的 commit 的节点才有资格。
+ 已接受 log 的 term 号最好 log 号的 id 最大  投票后，要更新自己的 term 吗
+log 复制
+关系变更
+安全
+概念：
+term
+logid
+role
+rpc：
+心跳
+选举
+ack
+log
+优化：
+快速复制
+压缩
+重新加入导致选举</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/raft/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/raft/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/</guid>
+      <description>一致性   strict consistency  Linearizability(strong consistency)  当事件之间没有重叠， Linearizability必须给出明确的先后顺序 A写入了x结束后, 接下来B一定能读出来x   Sequential consistency  第一是事件历史在各个进程上看全局一致, 第二是单个进程的事件历史在全局历史上符合程序顺序program order.   weak ordering  硬件约定CPU reordering不能跨越fence，而软件负责插入fence 尽管论文里也是把Weak Ordering作为一种consistency model来讲的，但是我觉得他其实算不上，他只能算是一个工程实现的模式    </description>
     </item>
     
     <item>
