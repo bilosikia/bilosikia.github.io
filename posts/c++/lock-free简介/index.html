@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.92.2" />
+  <meta name="generator" content="Hugo 0.94.2" />
   <title> Lock-Free简介 | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/">
@@ -87,76 +87,76 @@
 <p>std::atomic_flag类型是一个 boolean flag。保证是Lock-Free的。</p>
 <p><img src="actomic-types.png" alt="img"></p>
 <h2 id="实现自旋锁">实现自旋锁</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;atomic&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">spinlock_mutex</span>
-{
-    std<span style="color:#f92672">::</span>atomic_flag flag;
-<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-    spinlock_mutex()<span style="color:#f92672">:</span>
-        flag(ATOMIC_FLAG_INIT)
-    {}
-    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">lock</span>()
-    {   <span style="color:#75715e">// test_and_set 检测flag是否被设置，如果没有设置，设置并返回旧值
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span>(flag.test_and_set(std<span style="color:#f92672">::</span>memory_order_acquire)); 
-    }
-    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">unlock</span>()
-    {
-        flag.clear(std<span style="color:#f92672">::</span>memory_order_release);
-    }
-};
-</code></pre></div><h1 id="重排序">重排序</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;atomic&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">spinlock_mutex</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>atomic_flag flag;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    spinlock_mutex()<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        flag(ATOMIC_FLAG_INIT)
+</span></span><span style="display:flex;"><span>    {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">lock</span>()
+</span></span><span style="display:flex;"><span>    {   <span style="color:#75715e">// test_and_set 检测flag是否被设置，如果没有设置，设置并返回旧值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span>(flag.test_and_set(std<span style="color:#f92672">::</span>memory_order_acquire)); 
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">unlock</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        flag.clear(std<span style="color:#f92672">::</span>memory_order_release);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h1 id="重排序">重排序</h1>
 <h2 id="两个层级的重排序">两个层级的重排序</h2>
 <ul>
 <li>编译器</li>
 <li>cpu运行时指令重排序</li>
 </ul>
 <h2 id="double-checked单例问题httpswwwaristeiacompapersddj_jul_aug_2004_revisedpdf-"><a href="https://www.aristeia.com/Papers/DDJ_Jul_Aug_2004_revised.pdf">Double-Checked单例问题</a></h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">Singleton<span style="color:#f92672">*</span> Singleton<span style="color:#f92672">::</span>instance() { 
-    <span style="color:#66d9ef">if</span> (pInstance <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// 1st test lock; 
-</span><span style="color:#75715e"></span>         lock
-        <span style="color:#a6e22e">if</span> (pInstance <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// 2nd test 
-</span><span style="color:#75715e"></span>           alloc,
-           init
-           assign
-        }
-    } 
-    <span style="color:#66d9ef">return</span> pInstance; 
-}
-</code></pre></div><p>Step 1: Allocate memory to hold a Singleton object.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span>Singleton<span style="color:#f92672">*</span> Singleton<span style="color:#f92672">::</span>instance() { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (pInstance <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// 1st test lock; 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>         lock
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">if</span> (pInstance <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// 2nd test 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>           alloc,
+</span></span><span style="display:flex;"><span>           init
+</span></span><span style="display:flex;"><span>           assign
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> pInstance; 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Step 1: Allocate memory to hold a Singleton object.</p>
 <p>Step 2: Construct a Singleton object in the allocated memory.</p>
 <p>Step 3: Make pInstance point to the allocated memory</p>
 <p>compilers are sometimes allowed to swap steps 2 and 3。</p>
 <h1 id="一个问题">一个问题</h1>
 <p>会有怎样的输出</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;atomic&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;thread&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
-
-atomic_int a{<span style="color:#ae81ff">0</span>};
-atomic_int b{<span style="color:#ae81ff">0</span>};
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">value_set</span>() {
-    t <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
-    a <span style="color:#f92672">=</span> t;
-acquire
-release
-    b <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
-}
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">observer</span>() {
-    <span style="color:#66d9ef">while</span>(b <span style="color:#f92672">!=</span> <span style="color:#ae81ff">2</span>);
-    cout <span style="color:#f92672">&lt;&lt;</span> a <span style="color:#f92672">&lt;&lt;</span> endl;
-}
-
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
-    <span style="color:#66d9ef">thread</span> t1(value_set);
-    <span style="color:#66d9ef">thread</span> t2(observer);
-    t1.join();
-    t2.join();
-    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-}
-</code></pre></div><h1 id="内存序">内存序</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;atomic&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;thread&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>atomic_int a{<span style="color:#ae81ff">0</span>};
+</span></span><span style="display:flex;"><span>atomic_int b{<span style="color:#ae81ff">0</span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">value_set</span>() {
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    a <span style="color:#f92672">=</span> t;
+</span></span><span style="display:flex;"><span>acquire
+</span></span><span style="display:flex;"><span>release
+</span></span><span style="display:flex;"><span>    b <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">observer</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span>(b <span style="color:#f92672">!=</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>    cout <span style="color:#f92672">&lt;&lt;</span> a <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">thread</span> t1(value_set);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">thread</span> t2(observer);
+</span></span><span style="display:flex;"><span>    t1.join();
+</span></span><span style="display:flex;"><span>    t2.join();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="内存序">内存序</h1>
 <h2 id="定义">定义</h2>
 <p>memory order specifies how memory accesses, including regular, non-atomic memory accesses, are to be ordered around an atomic operation. Absent any constraints on a multi-core system, when multiple threads simultaneously read and write to several variables, one thread can observe the values change in an order different from the order another thread wrote them.</p>
 <p><img src="hapen-before.png" alt="img"></p>
@@ -179,12 +179,12 @@ release
 <ul>
 <li>
 <p>happens-before不是指令的执行顺序，而是指操作后，内存的变化对其他操作的影响。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-
-<span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; 
-
-<span style="color:#960050;background-color:#1e0010">如果只有一个线程执行，</span>b可能先于a执行<span style="color:#960050;background-color:#1e0010">，但是</span>a happens<span style="color:#f92672">-</span>before b.
-</code></pre></div><p>作用：明确内存访问/修改顺序，同步。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">如果只有一个线程执行，</span>b可能先于a执行<span style="color:#960050;background-color:#1e0010">，但是</span>a happens<span style="color:#f92672">-</span>before b.
+</span></span></code></pre></div><p>作用：明确内存访问/修改顺序，同步。</p>
 </li>
 </ul>
 <h2 id="synchronizes-with-relation"><strong>Synchronizes-With Relation</strong></h2>
@@ -195,42 +195,42 @@ release
 <li><a href="https://docs.oracle.com/javase/specs/jls/se13/html/jls-17.html#jls-17.4.4">java的volatile关键字提供</a><strong><a href="https://docs.oracle.com/javase/specs/jls/se13/html/jls-17.html#jls-17.4.4">Synchronizes-With保证。</a></strong></li>
 <li>A Write-Release Can <em>Synchronize-With</em> a Read-Acquire。反之不行。</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Message</span>
-{
-    clock_t     tick;
-    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> str;
-    <span style="color:#66d9ef">void</span><span style="color:#f92672">*</span>       param;
-};
-
-Message g_payload;
-std<span style="color:#f92672">::</span>atomic<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> g_guard(<span style="color:#ae81ff">0</span>);
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SendTestMessage</span>(<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> param)
-{
-    <span style="color:#75715e">// Copy to shared memory using non-atomic stores.
-</span><span style="color:#75715e"></span>    g_payload.tick  <span style="color:#f92672">=</span> clock();
-    g_payload.str   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;TestMessage&#34;</span>;
-    g_payload.param <span style="color:#f92672">=</span> param;
-    <span style="color:#75715e">// Perform an atomic write-release to indicate that the message is ready.re
-</span><span style="color:#75715e"></span>    g_guard.store(<span style="color:#ae81ff">1</span>, std<span style="color:#f92672">::</span>memory_order_release);
-}
-
-<span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">TryReceiveMessage</span>(Message<span style="color:#f92672">&amp;</span> result)
-{
-    <span style="color:#75715e">// Perform an atomic read-acquire to check whether the message is ready.
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> ready <span style="color:#f92672">=</span> g_guard.load(std<span style="color:#f92672">::</span>memory_order_acquire);  
-    <span style="color:#66d9ef">if</span> (ready <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
-    {
-        <span style="color:#75715e">// Yes. Copy from shared memory using non-atomic loads.
-</span><span style="color:#75715e"></span>        result.tick  <span style="color:#f92672">=</span> g_payload.tick;
-        result.str   <span style="color:#f92672">=</span> g_payload.str;
-        result.param <span style="color:#f92672">=</span> g_payload.param;
-        <span style="color:#66d9ef">return</span> true;
-    }
-    <span style="color:#75715e">// No.
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> false;
-}
-</code></pre></div><p><img src="synchronizes-with2.png" alt="img"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Message</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    clock_t     tick;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> str;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span><span style="color:#f92672">*</span>       param;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Message g_payload;
+</span></span><span style="display:flex;"><span>std<span style="color:#f92672">::</span>atomic<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> g_guard(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SendTestMessage</span>(<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> param)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Copy to shared memory using non-atomic stores.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    g_payload.tick  <span style="color:#f92672">=</span> clock();
+</span></span><span style="display:flex;"><span>    g_payload.str   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;TestMessage&#34;</span>;
+</span></span><span style="display:flex;"><span>    g_payload.param <span style="color:#f92672">=</span> param;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Perform an atomic write-release to indicate that the message is ready.re
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    g_guard.store(<span style="color:#ae81ff">1</span>, std<span style="color:#f92672">::</span>memory_order_release);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">TryReceiveMessage</span>(Message<span style="color:#f92672">&amp;</span> result)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Perform an atomic read-acquire to check whether the message is ready.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> ready <span style="color:#f92672">=</span> g_guard.load(std<span style="color:#f92672">::</span>memory_order_acquire);  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (ready <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Yes. Copy from shared memory using non-atomic loads.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        result.tick  <span style="color:#f92672">=</span> g_payload.tick;
+</span></span><span style="display:flex;"><span>        result.str   <span style="color:#f92672">=</span> g_payload.str;
+</span></span><span style="display:flex;"><span>        result.param <span style="color:#f92672">=</span> g_payload.param;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// No.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="synchronizes-with2.png" alt="img"></p>
 <h2 id="acquire-and-releas"><strong>Acquire and Releas</strong></h2>
 <ul>
 <li>可以认为是轻量级的，独立的内存屏障。</li>
@@ -242,35 +242,35 @@ std<span style="color:#f92672">::</span>atomic<span style="color:#f92672">&lt;</
 <li>主要有4类</li>
 </ul>
 <p><img src="mem-fence.png" alt="img"></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SendTestMessage</span>(<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> param)
-{
-    <span style="color:#75715e">// Copy to shared memory using non-atomic stores.
-</span><span style="color:#75715e"></span>    g_payload.tick  <span style="color:#f92672">=</span> clock();
-    g_payload.str   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;TestMessage&#34;</span>;
-    g_payload.param <span style="color:#f92672">=</span> param;
-    <span style="color:#75715e">// Release fence.
-</span><span style="color:#75715e"></span>    std<span style="color:#f92672">::</span>atomic_thread_fence(std<span style="color:#f92672">::</span>memory_order_release);
-    <span style="color:#75715e">// Perform an atomic write to indicate that the message is ready.
-</span><span style="color:#75715e"></span>    g_guard.store(<span style="color:#ae81ff">1</span>, std<span style="color:#f92672">::</span>memory_order_relaxed);
-}
-<span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">TryReceiveMessage</span>(Message<span style="color:#f92672">&amp;</span> result)
-{
-    <span style="color:#75715e">// Perform an atomic read to check whether the message is ready.
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> ready <span style="color:#f92672">=</span> g_guard.load(std<span style="color:#f92672">::</span>memory_order_relaxed);
-    <span style="color:#66d9ef">if</span> (ready <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
-    {
-        <span style="color:#75715e">// Acquire fence.
-</span><span style="color:#75715e"></span>        std<span style="color:#f92672">::</span>atomic_thread_fence(std<span style="color:#f92672">::</span>memory_order_acquire);
-        <span style="color:#75715e">// Yes. Copy from shared memory using non-atomic loads.
-</span><span style="color:#75715e"></span>        result.tick  <span style="color:#f92672">=</span> g_payload.tick;
-        result.str   <span style="color:#f92672">=</span> g_payload.str;
-        result.param <span style="color:#f92672">=</span> g_payload.param;
-        <span style="color:#66d9ef">return</span> true;
-    }  
-    <span style="color:#75715e">// No.
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> false;
-}
-</code></pre></div><h1 id="参考资料">参考资料：</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SendTestMessage</span>(<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> param)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Copy to shared memory using non-atomic stores.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    g_payload.tick  <span style="color:#f92672">=</span> clock();
+</span></span><span style="display:flex;"><span>    g_payload.str   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;TestMessage&#34;</span>;
+</span></span><span style="display:flex;"><span>    g_payload.param <span style="color:#f92672">=</span> param;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Release fence.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    std<span style="color:#f92672">::</span>atomic_thread_fence(std<span style="color:#f92672">::</span>memory_order_release);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Perform an atomic write to indicate that the message is ready.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    g_guard.store(<span style="color:#ae81ff">1</span>, std<span style="color:#f92672">::</span>memory_order_relaxed);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">TryReceiveMessage</span>(Message<span style="color:#f92672">&amp;</span> result)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Perform an atomic read to check whether the message is ready.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> ready <span style="color:#f92672">=</span> g_guard.load(std<span style="color:#f92672">::</span>memory_order_relaxed);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (ready <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Acquire fence.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        std<span style="color:#f92672">::</span>atomic_thread_fence(std<span style="color:#f92672">::</span>memory_order_acquire);
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Yes. Copy from shared memory using non-atomic loads.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        result.tick  <span style="color:#f92672">=</span> g_payload.tick;
+</span></span><span style="display:flex;"><span>        result.str   <span style="color:#f92672">=</span> g_payload.str;
+</span></span><span style="display:flex;"><span>        result.param <span style="color:#f92672">=</span> g_payload.param;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// No.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="参考资料">参考资料：</h1>
 <ul>
 <li>c++ concurrency in action 2e</li>
 <li><a href="https://preshing.com/">https://preshing.com/</a></li>

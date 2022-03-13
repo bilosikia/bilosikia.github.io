@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.92.2" />
+  <meta name="generator" content="Hugo 0.94.2" />
   <title> 算法 滑动窗口 | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">
@@ -64,142 +64,142 @@
 <p>[4, 7] -&gt; 2</p>
 <p>[7,7] -&gt; 3</p>
 <p>有重复统计</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
-
-<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">f</span>(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>v, <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> sum) {
-    <span style="color:#66d9ef">if</span>(v.size() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-    }
-    
-    <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    <span style="color:#66d9ef">int</span> l <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
-    <span style="color:#66d9ef">int</span> r <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> s <span style="color:#f92672">=</span> v[<span style="color:#ae81ff">0</span>];
-    <span style="color:#66d9ef">while</span>(l <span style="color:#f92672">&lt;</span> v.size()) {
-        <span style="color:#66d9ef">if</span>(s <span style="color:#f92672">&lt;</span> sum) {
-            <span style="color:#66d9ef">if</span>(r <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">&gt;=</span> v.size()) {
-                <span style="color:#66d9ef">break</span>;
-            }
-            r<span style="color:#f92672">++</span>;
-            s <span style="color:#f92672">+=</span> v[r];
-            <span style="color:#66d9ef">continue</span>;
-        }
-        <span style="color:#66d9ef">if</span>(s <span style="color:#f92672">&gt;=</span> sum) {
-            res <span style="color:#f92672">+=</span> v.size() <span style="color:#f92672">-</span> r;
-            s <span style="color:#f92672">-=</span> v[l];
-            l<span style="color:#f92672">++</span>;
-        }
-    }
-    
-    <span style="color:#66d9ef">return</span> res;
-}
-
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
-    <span style="color:#66d9ef">int</span> c;
-    <span style="color:#66d9ef">int</span> x;
-    cin <span style="color:#f92672">&gt;&gt;</span> c <span style="color:#f92672">&gt;&gt;</span> x;
-    
-    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> v;
-    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> c; i<span style="color:#f92672">++</span>) {
-        <span style="color:#66d9ef">int</span> k;
-        cin <span style="color:#f92672">&gt;&gt;</span> k;
-        v.push_back(k);
-    }
-    cout <span style="color:#f92672">&lt;&lt;</span> f(v, x) <span style="color:#f92672">&lt;&lt;</span> endl;
-    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-}
-</code></pre></div><p><a href="https://leetcode.com/problems/3sum/submissions/">3Sum</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">f</span>(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span>v, <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> sum) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(v.size() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> l <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> r <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> s <span style="color:#f92672">=</span> v[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span>(l <span style="color:#f92672">&lt;</span> v.size()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(s <span style="color:#f92672">&lt;</span> sum) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(r <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">&gt;=</span> v.size()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            r<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>            s <span style="color:#f92672">+=</span> v[r];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(s <span style="color:#f92672">&gt;=</span> sum) {
+</span></span><span style="display:flex;"><span>            res <span style="color:#f92672">+=</span> v.size() <span style="color:#f92672">-</span> r;
+</span></span><span style="display:flex;"><span>            s <span style="color:#f92672">-=</span> v[l];
+</span></span><span style="display:flex;"><span>            l<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> c;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> x;
+</span></span><span style="display:flex;"><span>    cin <span style="color:#f92672">&gt;&gt;</span> c <span style="color:#f92672">&gt;&gt;</span> x;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> v;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> c; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> k;
+</span></span><span style="display:flex;"><span>        cin <span style="color:#f92672">&gt;&gt;</span> k;
+</span></span><span style="display:flex;"><span>        v.push_back(k);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    cout <span style="color:#f92672">&lt;&lt;</span> f(v, x) <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://leetcode.com/problems/3sum/submissions/">3Sum</a></p>
 <p>排序后，求两数之和等于相反值。</p>
 <p>窗口：如果两数之和大于相反值，窗口减少，否则窗口增加</p>
 <p>时间复杂度：O(n^2)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> threeSum(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums)
-    {
-        sort(nums.begin(), nums.end());
-
-        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> res;
-        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums.size(); i<span style="color:#f92672">++</span>) {
-            <span style="color:#66d9ef">if</span> (nums[i] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
-                <span style="color:#66d9ef">break</span>;
-            }
-            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> nums[i] <span style="color:#f92672">==</span> nums[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
-                <span style="color:#66d9ef">continue</span>;
-            }
-
-            <span style="color:#66d9ef">int</span> m <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
-            <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> nums.size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-            <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n) {
-                <span style="color:#66d9ef">if</span> (nums[m] <span style="color:#f92672">+</span> nums[n] <span style="color:#f92672">==</span> <span style="color:#f92672">-</span>nums[i]) {
-                    res.push_back(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> { nums[i], nums[m], nums[n] });
-                    m<span style="color:#f92672">++</span>;
-                    n<span style="color:#f92672">--</span>;
-                    <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">&amp;&amp;</span> nums[m] <span style="color:#f92672">==</span> nums[m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
-                        m<span style="color:#f92672">++</span>;
-                    }
-                    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> m <span style="color:#f92672">&amp;&amp;</span> nums[n] <span style="color:#f92672">==</span> nums[n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
-                        n<span style="color:#f92672">--</span>;
-                    }
-                } <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> (nums[m] <span style="color:#f92672">+</span> nums[n] <span style="color:#f92672">&lt;</span> <span style="color:#f92672">-</span>nums[i]) {
-                    m<span style="color:#f92672">++</span>;
-                    <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">&amp;&amp;</span> nums[m] <span style="color:#f92672">==</span> nums[m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
-                        m<span style="color:#f92672">++</span>;
-                    }
-                } <span style="color:#66d9ef">else</span> {
-                    n<span style="color:#f92672">--</span>;
-                    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> m <span style="color:#f92672">&amp;&amp;</span> nums[n] <span style="color:#f92672">==</span> nums[n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
-                        n<span style="color:#f92672">--</span>;
-                    }
-                }
-            }
-        }
-
-        <span style="color:#66d9ef">return</span> res;
-    }
-};
-</code></pre></div><p><a href="https://leetcode.com/problems/contains-duplicate-iii/">Contains Duplicate III</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> threeSum(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        sort(nums.begin(), nums.end());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> res;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums.size(); i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (nums[i] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> nums[i] <span style="color:#f92672">==</span> nums[i <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> m <span style="color:#f92672">=</span> i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> nums.size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (nums[m] <span style="color:#f92672">+</span> nums[n] <span style="color:#f92672">==</span> <span style="color:#f92672">-</span>nums[i]) {
+</span></span><span style="display:flex;"><span>                    res.push_back(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> { nums[i], nums[m], nums[n] });
+</span></span><span style="display:flex;"><span>                    m<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                    n<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">&amp;&amp;</span> nums[m] <span style="color:#f92672">==</span> nums[m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
+</span></span><span style="display:flex;"><span>                        m<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> m <span style="color:#f92672">&amp;&amp;</span> nums[n] <span style="color:#f92672">==</span> nums[n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+</span></span><span style="display:flex;"><span>                        n<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> (nums[m] <span style="color:#f92672">+</span> nums[n] <span style="color:#f92672">&lt;</span> <span style="color:#f92672">-</span>nums[i]) {
+</span></span><span style="display:flex;"><span>                    m<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">while</span> (m <span style="color:#f92672">&lt;</span> n <span style="color:#f92672">&amp;&amp;</span> nums[m] <span style="color:#f92672">==</span> nums[m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]) {
+</span></span><span style="display:flex;"><span>                        m<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                    n<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&gt;</span> m <span style="color:#f92672">&amp;&amp;</span> nums[n] <span style="color:#f92672">==</span> nums[n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]) {
+</span></span><span style="display:flex;"><span>                        n<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><a href="https://leetcode.com/problems/contains-duplicate-iii/">Contains Duplicate III</a></p>
 <p>桶排序，巧妙之处在于一个捅中只会用一个元素</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-    <span style="color:#66d9ef">bool</span> containsNearbyAlmostDuplicate(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums, <span style="color:#66d9ef">int</span> k, <span style="color:#66d9ef">int</span> t) {
-        <span style="color:#66d9ef">if</span>(k <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> t <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
-            <span style="color:#66d9ef">return</span> false;
-        }
-        <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> tt <span style="color:#f92672">=</span> t;
-    
-        map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span>, <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span><span style="color:#f92672">&gt;</span> buckts;
-        
-        <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> min_num <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>max_element(nums.begin(), nums.end());
-        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums.size(); i<span style="color:#f92672">++</span>) {
-            <span style="color:#66d9ef">if</span>(i <span style="color:#f92672">&gt;</span> k) {
-                <span style="color:#66d9ef">int</span> p <span style="color:#f92672">=</span> i <span style="color:#f92672">-</span> k <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-                <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> b <span style="color:#f92672">=</span> (nums[p] <span style="color:#f92672">-</span> min_num) <span style="color:#f92672">/</span> (tt <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
-                buckts.erase(b);
-            }
-            
-            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> b <span style="color:#f92672">=</span> (nums[i] <span style="color:#f92672">-</span> min_num) <span style="color:#f92672">/</span> (tt <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
-            <span style="color:#66d9ef">if</span>(buckts.find(b <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">!=</span> buckts.end()) {
-                <span style="color:#66d9ef">if</span>(nums[i] <span style="color:#f92672">-</span> buckts[b <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">&lt;=</span> tt) {
-                   <span style="color:#66d9ef">return</span> true; 
-                }
-            }
-            <span style="color:#66d9ef">if</span>(buckts.find(b <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">!=</span> buckts.end()) {
-                <span style="color:#66d9ef">if</span>(buckts[b <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> nums[i] <span style="color:#f92672">&lt;=</span> tt) {
-                   <span style="color:#66d9ef">return</span> true; 
-                }
-            }
-            <span style="color:#66d9ef">if</span>(buckts.find(b) <span style="color:#f92672">!=</span> buckts.end()) {
-                <span style="color:#66d9ef">return</span> true;
-            }
-            buckts[b] <span style="color:#f92672">=</span> nums[i];
-        }
-        
-        <span style="color:#66d9ef">return</span> false;
-    }
-}
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> containsNearbyAlmostDuplicate(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums, <span style="color:#66d9ef">int</span> k, <span style="color:#66d9ef">int</span> t) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(k <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> t <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> tt <span style="color:#f92672">=</span> t;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        map<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span>, <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span><span style="color:#f92672">&gt;</span> buckts;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> min_num <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>max_element(nums.begin(), nums.end());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums.size(); i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(i <span style="color:#f92672">&gt;</span> k) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">int</span> p <span style="color:#f92672">=</span> i <span style="color:#f92672">-</span> k <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> b <span style="color:#f92672">=</span> (nums[p] <span style="color:#f92672">-</span> min_num) <span style="color:#f92672">/</span> (tt <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>                buckts.erase(b);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> b <span style="color:#f92672">=</span> (nums[i] <span style="color:#f92672">-</span> min_num) <span style="color:#f92672">/</span> (tt <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(buckts.find(b <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">!=</span> buckts.end()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(nums[i] <span style="color:#f92672">-</span> buckts[b <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">&lt;=</span> tt) {
+</span></span><span style="display:flex;"><span>                   <span style="color:#66d9ef">return</span> true; 
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(buckts.find(b <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">!=</span> buckts.end()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(buckts[b <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> nums[i] <span style="color:#f92672">&lt;=</span> tt) {
+</span></span><span style="display:flex;"><span>                   <span style="color:#66d9ef">return</span> true; 
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(buckts.find(b) <span style="color:#f92672">!=</span> buckts.end()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            buckts[b] <span style="color:#f92672">=</span> nums[i];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
   </div>
 
   <footer class="post-footer">
