@@ -166,8 +166,8 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">RefText</span><span style="color:#f92672">&lt;&#39;</span><span style="color:#a6e22e">ptr</span>, <span style="color:#f92672">&#39;</span><span style="color:#a6e22e">txt</span><span style="color:#f92672">&gt;</span> {
 </span></span><span style="display:flex;"><span>    ptr: <span style="color:#66d9ef">&amp;</span><span style="color:#f92672">&#39;</span><span style="color:#a6e22e">ptr</span> <span style="color:#a6e22e">mut</span> Text<span style="color:#f92672">&lt;&#39;</span><span style="color:#a6e22e">txt</span><span style="color:#f92672">&gt;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>推导 <code>ptr</code> 类型时，为什么不能是 <code>&amp;'b mut Text&lt;'b&gt;</code>? 涉及到协变和逆变问题：
-对于可变引用<code>&amp;'a mut T</code>，对 <code>'a</code> 是可以协变的，即你用一个比 <code>'a</code> 活得久的赋值给它是 OK 的，但是 <code>T</code> 是不可形变的。如上面的 <code>ptr</code>，它对 <code>T</code> 为 <code>Text&lt;'a&gt;</code> 是不可形变的，而 <code>ptr</code> 自身的生命周期可以协变，所以 <code>ptr</code> 可以是 <code>&amp;'b mut Text&lt;'a&gt;</code> 或 <code>&amp;'a mut Text&lt;'a&gt;</code>，而不能是 <code>&amp;'b mut Text&lt;'b&gt;</code>。</p>
+</span></span></code></pre></div><p>推导 <code>ptr</code> 类型时，为什么不能是 <code>&amp;'b mut Text&lt;'b&gt;</code>? 涉及到协变和逆变问题：</p>
+<p>对于可变引用<code>&amp;'a mut T</code>，对 <code>'a</code> 是可以协变的，即你用一个比 <code>'a</code> 活得久的赋值给它是 OK 的，但是 <code>T</code> 是不可形变的。如上面的 <code>ptr</code>，它对 <code>T</code> 为 <code>Text&lt;'a&gt;</code> 是不可形变的，而 <code>ptr</code> 自身的生命周期可以协变，所以 <code>ptr</code> 可以是 <code>&amp;'b mut Text&lt;'a&gt;</code> 或 <code>&amp;'a mut Text&lt;'a&gt;</code>，而不能是 <code>&amp;'b mut Text&lt;'b&gt;</code>。</p>
 <h1 id="reference">Reference</h1>
 <ul>
 <li>
