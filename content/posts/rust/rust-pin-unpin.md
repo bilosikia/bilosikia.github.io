@@ -202,7 +202,7 @@ impl<P: Deref> Pin<P> {
 }
 ```
 
-- into_inner，实现 Unpin 的类型，由于是可以安全的 move 的，所有可以直接获取到内部指针。
+- into_inner，由于实现 Unpin 的类型是可以安全 move 的，所有可以直接获取到内部指针。
 - into_inner_unchecked，没有实现 Unpin 的类型，获得内部指针是 unsafe 的。 如 P 是 &mut, 需要避免在 unsafe 代码中调用 swap 和 replace。
 - new_unchecked，没有实现 Unpin 的类型，通过该方法创建 Pin 是 unsafe 的，因为创建时，没有办法保证该指针所指的对象是没有被移动的，即需要用户保证数据是有效的。
 
@@ -225,4 +225,4 @@ impl<P: DerefMut> Pin<P> {
 
 - [Pinning - Asynchronous Programming in Rust](https://rust-lang.github.io/async-book/04_pinning/01_chapter.html)
 - https://doc.rust-lang.org/std/pin/index.html
-- https://www.reddit.com/r/rust/comments/n0vajw/why_the_selfreference_struct_need_pin/（自己提问）
+- https://www.reddit.com/r/rust/comments/n0vajw/why_the_selfreference_struct_need_pin/

@@ -1,3 +1,9 @@
+---
+title: "keep-alive"
+date: 2021-06-09T14:55:59+08:00
+
+---
+
 # keep-alive
 
 作用：
@@ -10,7 +16,7 @@
 
 由于纯 ACK 包，不会有任何的 ACK，一些 TCP 实现可能不回复，为了避免这种问题，可以包含1个无意义的字节，比如0x0（[RFC1122#TCP Keep-Alives](https://tools.ietf.org/html/rfc1122#section-4.2.3.6)规范建议：不应该包含任何数据）。
 
-![tcp-keep-alive](./resouces/tcp-keep-alive.png)
+![tcp-keep-alive](tcp-keep-alive.png)
 
 Ref: 
 

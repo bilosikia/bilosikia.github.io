@@ -11,6 +11,7 @@ date: 2021-06-09T14:55:59+08:00
 - [seq锁](https://zhuanlan.zhihu.com/p/364044850)
 - [惊群效应](https://blog.csdn.net/lyztyycode/article/details/78648798)
 - [BBR](https://www.bilibili.com/video/BV1h64y1x72H?spm_id_from=333.999.0.0)
+- [cache](http://www.wowotech.net/memory_management/458.html)
 
 # c++
 
