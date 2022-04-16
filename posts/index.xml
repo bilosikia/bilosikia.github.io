@@ -93,10 +93,10 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
     
     <item>
       <title>keep-alive</title>
-      <link>https://bilosikia.github.io/posts/%E7%BD%91%E7%BB%9C/keep-alive/</link>
+      <link>https://bilosikia.github.io/posts/net/keep-alive/</link>
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/%E7%BD%91%E7%BB%9C/keep-alive/</guid>
+      <guid>https://bilosikia.github.io/posts/net/keep-alive/</guid>
       <description>keep-alive 作用：
 避免无效的资源占用。如对方挂掉，NAT 等踢掉了连接等
 原理：
