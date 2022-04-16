@@ -92,6 +92,23 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
     </item>
     
     <item>
+      <title>keep-alive</title>
+      <link>https://bilosikia.github.io/posts/%E7%BD%91%E7%BB%9C/keep-alive/</link>
+      <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/%E7%BD%91%E7%BB%9C/keep-alive/</guid>
+      <description>keep-alive 作用：
+避免无效的资源占用。如对方挂掉，NAT 等踢掉了连接等
+原理：
+发送探测包，SEG.SEQ = SND.NXT-1，而 SND.NXT = RCV.NXT，即发送的包 seq 为上一个已确认包的 seq号，由于该包已经被确认了，对方不会解析包，而是直接回复 ACK。
+由于纯 ACK 包，不会有任何的 ACK，一些 TCP 实现可能不回复，为了避免这种问题，可以包含1个无意义的字节，比如0x0（RFC1122#TCP Keep-Alives规范建议：不应该包含任何数据）。
+Ref:
+  http://www.52im.net/thread-3506-1-1.html
+  https://datatracker.ietf.org/doc/html/rfc1122#page-101
+  </description>
+    </item>
+    
+    <item>
       <title>knowledge index</title>
       <link>https://bilosikia.github.io/posts/knowledge-index/</link>
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
@@ -263,23 +280,6 @@ log
       
       <guid>https://bilosikia.github.io/posts/%E6%AF%8F%E6%97%A5%E9%98%85%E8%AF%BB/</guid>
       <description>2021-8-25  Inline In Rust 并查集  </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://bilosikia.github.io/posts/%E7%BD%91%E7%BB%9C/tcp/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://bilosikia.github.io/posts/%E7%BD%91%E7%BB%9C/tcp/</guid>
-      <description>keep-alive 作用：
-避免无效的资源占用。如对方挂掉，NAT 等踢掉了连接等
-原理：
-发送探测包，SEG.SEQ = SND.NXT-1，而 SND.NXT = RCV.NXT，即发送的包 seq 为上一个已确认包的 seq号，由于该包已经被确认了，对方不会解析包，而是直接回复 ACK。
-由于纯 ACK 包，不会有任何的 ACK，一些 TCP 实现可能不回复，为了避免这种问题，可以包含1个无意义的字节，比如0x0（RFC1122#TCP Keep-Alives规范建议：不应该包含任何数据）。
-Ref:
-  http://www.52im.net/thread-3506-1-1.html
-  https://datatracker.ietf.org/doc/html/rfc1122#page-101
-  </description>
     </item>
     
   </channel>
