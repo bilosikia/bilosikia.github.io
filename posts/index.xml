@@ -60,12 +60,12 @@ Waker 将 Driver 和 Excutor 解耦。
     </item>
     
     <item>
-      <title>lifetime and drop</title>
-      <link>https://bilosikia.github.io/posts/rust/lifetime-and-drop/</link>
+      <title>lifetime 小问</title>
+      <link>https://bilosikia.github.io/posts/rust/lifetime-%E5%B0%8F%E9%97%AE/</link>
       <pubDate>Tue, 23 Nov 2021 14:55:59 +0800</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/rust/lifetime-and-drop/</guid>
-      <description>Rust 的生命周期检查为静态检查, 并且为非词法作用域。
+      <guid>https://bilosikia.github.io/posts/rust/lifetime-%E5%B0%8F%E9%97%AE/</guid>
+      <description>非词法作用域 Rust 的生命周期检查为静态检查, 并且为非词法作用域。
 Rust把生命周期检查的步骤由HIR改为了MIR，以便可以降低生命周期检查的粒度，使生命周期规则从词法作用域转变成非词法作用域
 let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp;#34;, x); // This is OK, x is no longer needed data.push(4); 但如果 x 实现了 Drop 会怎么样呢？
 #[derive(Debug)] struct X&amp;lt;&amp;#39;a&amp;gt;(&amp;amp;&amp;#39;a i32);  impl Drop for X&amp;lt;&amp;#39;_&amp;gt; {  fn drop(&amp;amp;mut self) {} }  let mut data = vec![1, 2, 3]; let x = X(&amp;amp;data[0]); println!(&amp;#34;{:?}&amp;#34;, x); data.push(4); // Here, the destructor is run and therefore this&amp;#39;ll fail to compile.</description>
