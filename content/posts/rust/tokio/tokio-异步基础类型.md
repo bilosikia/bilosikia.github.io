@@ -251,3 +251,14 @@ time 是最上层的 driver，本身采用时间轮的实现方式。park 时，
 
 如果 runtime 添加了新的 task，而此时 driver 还可能处于 park 状态。spawn task 时，会先将任务加入 run_queue, 然后调用 driver 的 unpark。unpark 会一直调用到 io driver 的 unpark，然后调用 mio 的 waker，从 poll 中返回。
 
+## 底层的 task，mio 事件是何时添加的？
+
+在创建的时候注册到 mio，通过 PollEvented 完成注册。poll 时，只会去检查事件是否 ready，不会再 poll 时注册。
+
+```rust
+pub(crate) fn new(listener: mio::net::TcpListener) -> io::Result<TcpListener> {
+   let io = PollEvented::new(listener)?;
+   Ok(TcpListener { io })
+}
+```
+
