@@ -242,3 +242,12 @@ impl<T, S> Chan<T, S> {
 
 ```
 
+## time
+
+time 是最上层的 driver，本身采用时间轮的实现方式。park 时，会得到最近的一次唤醒时间，然后调用 park_timeout 在下层 driver。
+最下层的 driver 是 io driver，io driver park_timeout 时调用 mio 的 poll 方法，并指定 timeout，从而实现 timeout 后唤醒 driver 树。
+
+## mio 如何唤醒 driver 树
+
+如果 runtime 添加了新的 task，而此时 driver 还可能处于 park 状态。spawn task 时，会先将任务加入 run_queue, 然后调用 driver 的 unpark。unpark 会一直调用到 io driver 的 unpark，然后调用 mio 的 waker，从 poll 中返回。
+
