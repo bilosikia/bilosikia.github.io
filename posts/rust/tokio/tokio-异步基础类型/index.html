@@ -240,7 +240,13 @@
 最下层的 driver 是 io driver，io driver park_timeout 时调用 mio 的 poll 方法，并指定 timeout，从而实现 timeout 后唤醒 driver 树。</p>
 <h2 id="mio-如何唤醒-driver-树">mio 如何唤醒 driver 树</h2>
 <p>如果 runtime 添加了新的 task，而此时 driver 还可能处于 park 状态。spawn task 时，会先将任务加入 run_queue, 然后调用 driver 的 unpark。unpark 会一直调用到 io driver 的 unpark，然后调用 mio 的 waker，从 poll 中返回。</p>
-
+<h2 id="底层的-taskmio-事件是何时添加的">底层的 task，mio 事件是何时添加的？</h2>
+<p>在创建的时候注册到 mio，通过 PollEvented 完成注册。poll 时，只会去检查事件是否 ready，不会再 poll 时注册。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">pub</span>(<span style="color:#66d9ef">crate</span>) <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">new</span>(listener: <span style="color:#a6e22e">mio</span>::net::TcpListener) -&gt; <span style="color:#a6e22e">io</span>::Result<span style="color:#f92672">&lt;</span>TcpListener<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> io <span style="color:#f92672">=</span> PollEvented::new(listener)<span style="color:#f92672">?</span>;
+</span></span><span style="display:flex;"><span>   Ok(TcpListener { io })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
   </div>
 
   <footer class="post-footer">
