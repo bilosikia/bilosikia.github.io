@@ -13,7 +13,7 @@
       <pubDate>Sun, 26 Dec 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/</guid>
-      <description>&amp;amp;mutT invariance fn evil_feeder&amp;lt;T&amp;gt;(input: &amp;amp;mut T, val: T) {  *input = val; }  fn main() {  let mut mr_snuggles: &amp;amp;&amp;#39;static str = &amp;#34;meow! :3&amp;#34;; // mr. snuggles forever!!  {  let spike = String::from(&amp;#34;bark! &amp;gt;:V&amp;#34;);  let spike_str: &amp;amp;str = &amp;amp;spike; // Only lives for the block  evil_feeder(&amp;amp;mut mr_snuggles, spike_str); // EVIL!  }  println!(&amp;#34;{}&amp;#34;, mr_snuggles); // Use after free? } error[E0597]: `spike` does not live long enough  --&amp;gt; src/main.</description>
+      <description>&amp;amp;mutT invariance fn evil_feeder&amp;lt;T&amp;gt;(input: &amp;amp;mut T, val: T) { *input = val; } fn main() { let mut mr_snuggles: &amp;amp;&amp;#39;static str = &amp;#34;meow! :3&amp;#34;; // mr. snuggles forever!! { let spike = String::from(&amp;#34;bark! &amp;gt;:V&amp;#34;); let spike_str: &amp;amp;str = &amp;amp;spike; // Only lives for the block evil_feeder(&amp;amp;mut mr_snuggles, spike_str); // EVIL! } println!(&amp;#34;{}&amp;#34;, mr_snuggles); // Use after free? } error[E0597]: `spike` does not live long enough --&amp;gt; src/main.rs:9:31 | 6 | let mut mr_snuggles: &amp;amp;&amp;#39;static str = &amp;#34;meow!</description>
     </item>
     
     <item>
@@ -24,7 +24,7 @@
       <guid>https://bilosikia.github.io/posts/rust/tokio/tokio-%E5%BC%82%E6%AD%A5%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/</guid>
       <description>为了适配 async 模型，tokio 重新实现了标准库中的 fs，net，channel 等模块，提供想对应的 async 方法。
 本文以 TcpListener 为例，剖析 tokio 如何实现异步版本的 TcpListener，以及如何与 Reactor 整合。
-数据结构关系-自顶向下 pub struct TcpListener {  io: PollEvented&amp;lt;mio::net::TcpListener&amp;gt;, } // 表示一个与 Reactor 关联的 IO 资源 pub(crate) struct PollEvented&amp;lt;E: Source&amp;gt; {  io: Option&amp;lt;E&amp;gt;,  registration: Registration, } // 表示一个已经注册到了 Reactor Io 资源 // handle 表示注册的 Reactor Driver handle // shared 表示注册的 Io 相关信息引用，可用了观测 IO 状态 pub(crate) struct Registration {  /// Handle to the associated driver.</description>
+数据结构关系-自顶向下 pub struct TcpListener { io: PollEvented&amp;lt;mio::net::TcpListener&amp;gt;, } // 表示一个与 Reactor 关联的 IO 资源 pub(crate) struct PollEvented&amp;lt;E: Source&amp;gt; { io: Option&amp;lt;E&amp;gt;, registration: Registration, } // 表示一个已经注册到了 Reactor Io 资源 // handle 表示注册的 Reactor Driver handle // shared 表示注册的 Io 相关信息引用，可用了观测 IO 状态 pub(crate) struct Registration { /// Handle to the associated driver. handle: Handle, /// Reference to state stored by the driver.</description>
     </item>
     
     <item>
@@ -33,17 +33,18 @@
       <pubDate>Sun, 12 Dec 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/rust/tokio/tokio-%E6%A6%82%E8%A7%88%E7%AF%87/</guid>
-      <description>runtime 构成   Task:
+      <description>runtime 构成 Task:
 runtime 每 spawn 一个异步函数就会产生一个 Task。Task 是 runtime 的调度单元，每个 Task 包含需要执行的 Future 和状态信息。
-  Excutor：
+Excutor：
 用来执行，管理，调度 Task，包含线程池，每个线程被抽象为一个 Worker。
-  Driver:
+Driver:
 Task 的执行，需要 await 的地方通常是 IO，Timer等，需要依赖外部状态的改变。当外部状态改变时，Task 需要被重新调度，Driver 用于驱动 Task 的状态变更。
 Driver 对应传统的 Reator 模型，只是不仅仅包含 IO, 还包含 Timer，Signal 等。
-  Waker：
+Waker：
 属于 Task 的一部分，用于关联 Driver 和 Exuctor。当 Driver 任务 Task 就绪可以被重新调度时，通过 Waker 唤醒任务。
 Waker 将 Driver 和 Excutor 解耦。
-  rust 只定义了异步运行时的接口，即 Future 和 Waker。runtime 按照定义的规范实现个组件之间的协作。</description>
+rust 只定义了异步运行时的接口，即 Future 和 Waker。runtime 按照定义的规范实现个组件之间的协作。
+除了 runtime 自身，凡是可阻塞操作都需要被实现为一个 Future，如 IO read/write，sleep，mutex 等，这些基础组件的实现依赖于运行时的实现，和 runtime 强绑定。</description>
     </item>
     
     <item>
@@ -54,9 +55,9 @@ Waker 将 Driver 和 Excutor 解耦。
       <guid>https://bilosikia.github.io/posts/rust/async-fn-memory-layout/</guid>
       <description>这个问题源于 rust 的一个 issue: Async fn doubles argument size
 考虑下面的代码，可能会产生一下几个问题：
-  async fn 生成的对象内存如何布局？
-  为什么 fut1 和 fut2 的大小不一样?
-  async fn wait() {}  async fn foo(arg: [u8; 10]) {  wait().await;  drop(arg); }  fn main() {  let fut1 = async {  let arg = [0u8; 10];  wait().await;  drop(arg);  };  let fut2 = foo([0u8; 10]);  println!(&amp;#34;{}, {}&amp;#34;, std::mem::size_of_val(&amp;amp;fut1), std::mem::size_of_val(&amp;amp;fut2)); } 12, 22 async fn 对象内存布局 每个 async 函数被编译器实现为一个 generator，每个 await 对应于一个 yield ，每个 yield 点需要保存当前必要的上下文用于后续恢复执行。</description>
+async fn 生成的对象内存如何布局？
+为什么 fut1 和 fut2 的大小不一样?
+async fn wait() {} async fn foo(arg: [u8; 10]) { wait().await; drop(arg); } fn main() { let fut1 = async { let arg = [0u8; 10]; wait().await; drop(arg); }; let fut2 = foo([0u8; 10]); println!(&amp;#34;{}, {}&amp;#34;, std::mem::size_of_val(&amp;amp;fut1), std::mem::size_of_val(&amp;amp;fut2)); } 12, 22 async fn 对象内存布局 每个 async 函数被编译器实现为一个 generator，每个 await 对应于一个 yield ，每个 yield 点需要保存当前必要的上下文用于后续恢复执行。</description>
     </item>
     
     <item>
@@ -68,27 +69,7 @@ Waker 将 Driver 和 Excutor 解耦。
       <description>非词法作用域 Rust 的生命周期检查为静态检查, 并且为非词法作用域。
 Rust把生命周期检查的步骤由HIR改为了MIR，以便可以降低生命周期检查的粒度，使生命周期规则从词法作用域转变成非词法作用域
 let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp;#34;, x); // This is OK, x is no longer needed data.push(4); 但如果 x 实现了 Drop 会怎么样呢？
-#[derive(Debug)] struct X&amp;lt;&amp;#39;a&amp;gt;(&amp;amp;&amp;#39;a i32);  impl Drop for X&amp;lt;&amp;#39;_&amp;gt; {  fn drop(&amp;amp;mut self) {} }  let mut data = vec![1, 2, 3]; let x = X(&amp;amp;data[0]); println!(&amp;#34;{:?}&amp;#34;, x); data.push(4); // Here, the destructor is run and therefore this&amp;#39;ll fail to compile.</description>
-    </item>
-    
-    <item>
-      <title>算法 滑动窗口</title>
-      <link>https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
-      <pubDate>Sat, 26 Jun 2021 01:15:43 +0800</pubDate>
-      
-      <guid>https://bilosikia.github.io/posts/%E7%AE%97%E6%B3%95-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
-      <description>时间复杂度 O(n): 左右标记都最多移动 n 次
-连续子区间和
-窗口内的元素之和，大于给定值时，则窗口右标及之后的子数组都应该算在结果中
-不能统计左下标及之前的个数，因为窗口之和可能远大于给定值，之后向后滑动时，会重复统计：
-数组： 2 4 7 和：6
-[2, 2] -&amp;gt; 0
-[2, 4] -&amp;gt; 1
-[4, 4] -&amp;gt; 0
-[4, 7] -&amp;gt; 2
-[7,7] -&amp;gt; 3
-有重复统计
-#include &amp;lt;vector&amp;gt;#include &amp;lt;iostream&amp;gt;using namespace std;  long long f(vector&amp;lt;int&amp;gt; &amp;amp;v, long long sum) {  if(v.size() == 0) {  return 0;  }   long long res = 0;  int l = 0;  int r = 0;  long long s = v[0];  while(l &amp;lt; v.</description>
+#[derive(Debug)] struct X&amp;lt;&amp;#39;a&amp;gt;(&amp;amp;&amp;#39;a i32); impl Drop for X&amp;lt;&amp;#39;_&amp;gt; { fn drop(&amp;amp;mut self) {} } let mut data = vec![1, 2, 3]; let x = X(&amp;amp;data[0]); println!(&amp;#34;{:?}&amp;#34;, x); data.push(4); // Here, the destructor is run and therefore this&amp;#39;ll fail to compile.</description>
     </item>
     
     <item>
@@ -103,9 +84,8 @@ let mut data = vec![1, 2, 3]; let x = &amp;amp;data[0]; println!(&amp;#34;{}&amp
 发送探测包，SEG.SEQ = SND.NXT-1，而 SND.NXT = RCV.NXT，即发送的包 seq 为上一个已确认包的 seq号，由于该包已经被确认了，对方不会解析包，而是直接回复 ACK。
 由于纯 ACK 包，不会有任何的 ACK，一些 TCP 实现可能不回复，为了避免这种问题，可以包含1个无意义的字节，比如0x0（RFC1122#TCP Keep-Alives规范建议：不应该包含任何数据）。
 Ref:
-  http://www.52im.net/thread-3506-1-1.html
-  https://datatracker.ietf.org/doc/html/rfc1122#page-101
-  </description>
+http://www.52im.net/thread-3506-1-1.html
+https://datatracker.ietf.org/doc/html/rfc1122#page-101</description>
     </item>
     
     <item>
@@ -114,14 +94,18 @@ Ref:
       <pubDate>Wed, 09 Jun 2021 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/knowledge-index/</guid>
-      <description>Linux  再谈 slab 伙伴算法 Socket write &amp;amp; read seq锁 惊群效应 BBR cache  c++   取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
-  n &amp;amp; -n returns the rightmost 1 bit in n.
-  n &amp;amp; (n - 1) 消除最右 1
-  X % 2^n = X &amp;amp; (2^n - 1)，环形队列，时间轮实现
-  GUARDED_BY
-  容器元素比较：严格弱序
-  s.size() - 10 的结果是无符号
-  intrusive</description>
+      <description>Linux 再谈 slab 伙伴算法 Socket write &amp;amp; read seq锁 惊群效应 BBR cache c++ 取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险
+n &amp;amp; -n returns the rightmost 1 bit in n.
+n &amp;amp; (n - 1) 消除最右 1
+X % 2^n = X &amp;amp; (2^n - 1)，环形队列，时间轮实现
+GUARDED_BY
+容器元素比较：严格弱序
+s.size() - 10 的结果是无符号
+intrusive
+COW: std::string的Copy-on-Write：不如想象中美好
+伪共享（false sharing），并发编程无声的性能杀手
+17 版本后，可以直接写 std::array vec = {&amp;ldquo;hello&amp;rdquo;}, 不用写类型和个数了
+对 cast 完的指针就行 dereference 是 UB(TBAA 优化)</description>
     </item>
     
     <item>
@@ -130,8 +114,8 @@ Ref:
       <pubDate>Fri, 30 Apr 2021 17:52:54 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/rust/rust-pin-unpin/</guid>
-      <description>如何在 Rust 中实现一个自引用的数据结构 struct SelfRef&amp;lt;&amp;#39;a&amp;gt; {  s: String,  s_ref: Option&amp;lt;&amp;amp;&amp;#39;a mut str&amp;gt; }  fn main() {  let mut a = SelfRef {  s: &amp;#34;hello&amp;#34;.to_owned(),  s_ref: None  };  a.s_ref = Some(a.s.as_mut());  println!(&amp;#34;{:?}&amp;#34;, a.s_ref);   // 下面代码编译错误  // let b = a;  // println!(&amp;#34;{:?}&amp;#34;, b.s_ref); }  output： Some(&amp;#34;hello&amp;#34;) 代码能正常运行，a.s_ref 保存了一个指向 a.s 的引用。 但是当我们执行被注释的代码时，即尝试将 a 赋值给 b 时，编译器报了如下错误：
-a.s_ref = Some(a.</description>
+      <description>如何在 Rust 中实现一个自引用的数据结构 struct SelfRef&amp;lt;&amp;#39;a&amp;gt; { s: String, s_ref: Option&amp;lt;&amp;amp;&amp;#39;a mut str&amp;gt; } fn main() { let mut a = SelfRef { s: &amp;#34;hello&amp;#34;.to_owned(), s_ref: None }; a.s_ref = Some(a.s.as_mut()); println!(&amp;#34;{:?}&amp;#34;, a.s_ref); // 下面代码编译错误 // let b = a; // println!(&amp;#34;{:?}&amp;#34;, b.s_ref); } output： Some(&amp;#34;hello&amp;#34;) 代码能正常运行，a.s_ref 保存了一个指向 a.s 的引用。 但是当我们执行被注释的代码时，即尝试将 a 赋值给 b 时，编译器报了如下错误：
+a.s_ref = Some(a.s.as_str()); | --- borrow of `a.s` occurs here move out of `a` occurs here, borrow later used here 由于 SelfRef 没有自动实现 Copy， 当执行 let b = a 时，实际发生了 move：</description>
     </item>
     
     <item>
@@ -140,9 +124,9 @@ a.s_ref = Some(a.</description>
       <pubDate>Sat, 16 Nov 2019 14:55:59 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/db/innodb-%E9%94%81/</guid>
-      <description>事务隔离级别  READ UNCOMMITTED  脏读。   READ COMMITTED  Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。   REPEATABLE READ (默认)  逻辑意义上的更新丢失问题。   SERIALIZABLE  锁 lock的对象是事务，锁定的是数据库中的对象，如表，页，行。一般在事务commit和rollback后释放。
+      <description>事务隔离级别 READ UNCOMMITTED 脏读。 READ COMMITTED Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。 REPEATABLE READ (默认) 逻辑意义上的更新丢失问题。 SERIALIZABLE 锁 lock的对象是事务，锁定的是数据库中的对象，如表，页，行。一般在事务commit和rollback后释放。
 INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事务在行级上的琐和表级上的锁同时存在。
-锁的类型  表级锁  共享锁（S Lock），会阻塞其他事务修改表数据。 排他锁（X Lock），会阻塞其他事务读和写。 意向共享锁（IS Lock），事务想要获得一张表中某几行的共享锁。 意向排他锁（IX Lock），事务想要获得一张表中某几行的排他锁。   行级锁  共享锁（S Lock），允许事务读一行数据，阻塞其他事务修改数据。 排他锁（X Lock），允许事务删除或更新一行数据，阻塞其他事务读取和修改数据。    意向锁  The main purpose of IX and IS locks is to show that someone is locking a row, or going to lock a row in the table.</description>
+锁的类型 表级锁 共享锁（S Lock），会阻塞其他事务修改表数据。 排他锁（X Lock），会阻塞其他事务读和写。 意向共享锁（IS Lock），事务想要获得一张表中某几行的共享锁。 意向排他锁（IX Lock），事务想要获得一张表中某几行的排他锁。 行级锁 共享锁（S Lock），允许事务读一行数据，阻塞其他事务修改数据。 排他锁（X Lock），允许事务删除或更新一行数据，阻塞其他事务读取和修改数据。 意向锁 The main purpose of IX and IS locks is to show that someone is locking a row, or going to lock a row in the table. S and IX locks allow access by multiple clients. They won&amp;rsquo;t necessarily conflict until they try to get real locks on the same rows.</description>
     </item>
     
     <item>
@@ -151,8 +135,8 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
       <pubDate>Sat, 21 Sep 2019 01:15:43 +0800</pubDate>
       
       <guid>https://bilosikia.github.io/posts/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/</guid>
-      <description>基本概念  Wait-freedom:  Wait-freedom means that each thread moves forward regardless of external factors like contention from other threads, other thread blocking. Each operations is executed in a bounded number of steps. It&amp;rsquo;s the strongest guarantee for synchronization algorithms.
- Lock-freedom:  Lock-freedom means that a system as a whole moves forward regardless of anything. Forward progress for each individual thread is not guaranteed (that is, individual threads can starve).</description>
+      <description>基本概念 Wait-freedom: Wait-freedom means that each thread moves forward regardless of external factors like contention from other threads, other thread blocking. Each operations is executed in a bounded number of steps. It&amp;rsquo;s the strongest guarantee for synchronization algorithms.
+Lock-freedom: Lock-freedom means that a system as a whole moves forward regardless of anything. Forward progress for each individual thread is not guaranteed (that is, individual threads can starve). It&amp;rsquo;s a weaker guarantee than wait-freedom.</description>
     </item>
     
     <item>
@@ -170,7 +154,7 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bilosikia.github.io/posts/qa/</guid>
-      <description>DB  自增主键和 uuid  </description>
+      <description>DB 自增主键和 uuid </description>
     </item>
     
     <item>
@@ -179,14 +163,14 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bilosikia.github.io/posts/raft/learder-%E9%80%89%E4%B8%BE/</guid>
-      <description>为什么一般为奇数个节点  方便投票，避免均衡投票 奇数节点增加一个节点，并不能提高节点容错。3 个节点，允许一个接口挂掉，4 个节点时，也只能允许一个节点挂掉。  如何判断发起vote请求的节点log至少和当前一样新  log中的 term 谁大谁更新 term 号相同时，logid 越大越新  注意比较的是当前 log 中的term，并不是 currentTerm。但如果发起方 term 比当前低，直接拒绝。如果比当前新，不管是否投票，都要更新 term 号。
+      <description>为什么一般为奇数个节点 方便投票，避免均衡投票 奇数节点增加一个节点，并不能提高节点容错。3 个节点，允许一个接口挂掉，4 个节点时，也只能允许一个节点挂掉。 如何判断发起vote请求的节点log至少和当前一样新 log中的 term 谁大谁更新 term 号相同时，logid 越大越新 注意比较的是当前 log 中的term，并不是 currentTerm。但如果发起方 term 比当前低，直接拒绝。如果比当前新，不管是否投票，都要更新 term 号。
 为什么需要预选举，以及是怎么工作的 为什么需要：
 只要 rpc 请求方的 term 号更大，不管当前是什么角色，都会转为 follower。被隔离的节点发起 vote 会不断的增加 term 号，导致重新选主。
 如何工作：
- baseline election timeout 内每一收到过 Leader 心跳 Candidate 日志足够新  因此无法增加 term，重新加入集群时不会导致重新选主
+baseline election timeout 内每一收到过 Leader 心跳 Candidate 日志足够新 因此无法增加 term，重新加入集群时不会导致重新选主
 为什么 term 号只能单调递增？ 为什么收到 vote，append（包括心跳）时，如果 term 号比当前大，要更新 term 号呢？
 如果是 vote，如果判断发起节点 log 比当前旧，不会赞成投票，为什么还需要更新 term 号呢？
- term 和 logid 能唯一标志一条 log，故 term 只能是单调递增 append 请求，没法判断发起节点 log 是否比当前旧，故只能被动更新 term 不用记录 term 更低的投票，因为他们不可能赢得选举 选举期间，如果有更高 term 直接转为 follower，即便曾经的 vote 请求得到了多数的赞成，可以直接当做选举失败处理。  另外，预选举由于请求的 term 号没有增加，不会让其他节点更新 term。</description>
+term 和 logid 能唯一标志一条 log，故 term 只能是单调递增 append 请求，没法判断发起节点 log 是否比当前旧，故只能被动更新 term 不用记录 term 更低的投票，因为他们不可能赢得选举 选举期间，如果有更高 term 直接转为 follower，即便曾经的 vote 请求得到了多数的赞成，可以直接当做选举失败处理。 另外，预选举由于请求的 term 号没有增加，不会让其他节点更新 term。</description>
     </item>
     
     <item>
@@ -199,7 +183,8 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
 from the old configuration to the new configuration can be unsafe; it isn’t possible to atomically
 switch all of the servers at once, so the cluster can potentially split into two independent majorities
 during the transition
-一次变更一个成员  when adding or removing just a single server, it is safe to switch directly to the new configuration.</description>
+一次变更一个成员 when adding or removing just a single server, it is safe to switch directly to the new configuration.
+为什么不会造成脑裂： 在下一次变更前，之前的一次变更，一定是被同步到大多数节点的。新增一个节点，即便 Cnew 同步到</description>
     </item>
     
     <item>
@@ -209,7 +194,7 @@ during the transition
       
       <guid>https://bilosikia.github.io/posts/raft/servehttpkvapi/</guid>
       <description>serveHttpKVAPI store.proposeC -&amp;gt; raft.node.propc
- put  store.Propose  s.proposeC &amp;lt;- buf.String()  prop, ok := &amp;lt;-rc.proposeC  rc.node.Propose(context.TODO(), []byte(prop))  stepWait  n.propc &amp;lt;- pm  pm := &amp;lt;-propc:  r.Step(m)  r.step(r, m)  r.appendEntry(m.Entries&amp;hellip;) r.bcastAppend()   newPipelineHandler   h.r.Process(context.TODO(), m)   Raftnode.process   rc.node.Step(ctx, m)   n.recvc &amp;lt;- m:   r.Step(m)   n.rn.HasReady()   readyc &amp;lt;- rd:   rd := &amp;lt;-rc.</description>
+put store.Propose s.proposeC &amp;lt;- buf.String() prop, ok := &amp;lt;-rc.proposeC rc.node.Propose(context.TODO(), []byte(prop)) stepWait n.propc &amp;lt;- pm pm := &amp;lt;-propc: r.Step(m) r.step(r, m) r.appendEntry(m.Entries&amp;hellip;) r.bcastAppend() newPipelineHandler h.r.Process(context.TODO(), m) Raftnode.process rc.node.Step(ctx, m) n.recvc &amp;lt;- m: r.Step(m) n.rn.HasReady() readyc &amp;lt;- rd: rd := &amp;lt;-rc.node.Ready() </description>
     </item>
     
     <item>
@@ -223,7 +208,7 @@ a: 顺序一致性
 leader 选举
 选举条件：
 只有拥有最新的已提交的 commit 的节点才有资格。
- 已接受 log 的 term 号最好 log 号的 id 最大  投票后，要更新自己的 term 吗
+已接受 log 的 term 号最好 log 号的 id 最大 投票后，要更新自己的 term 吗
 log 复制
 关系变更
 安全
@@ -248,7 +233,7 @@ log
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bilosikia.github.io/posts/raft/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/</guid>
-      <description>一致性   strict consistency  Linearizability(strong consistency)  当事件之间没有重叠， Linearizability必须给出明确的先后顺序 A写入了x结束后, 接下来B一定能读出来x   Sequential consistency  第一是事件历史在各个进程上看全局一致, 第二是单个进程的事件历史在全局历史上符合程序顺序program order.   weak ordering  硬件约定CPU reordering不能跨越fence，而软件负责插入fence 尽管论文里也是把Weak Ordering作为一种consistency model来讲的，但是我觉得他其实算不上，他只能算是一个工程实现的模式    </description>
+      <description>一致性 strict consistency Linearizability(strong consistency) 当事件之间没有重叠， Linearizability必须给出明确的先后顺序 A写入了x结束后, 接下来B一定能读出来x Sequential consistency 第一是事件历史在各个进程上看全局一致, 第二是单个进程的事件历史在全局历史上符合程序顺序program order. weak ordering 硬件约定CPU reordering不能跨越fence，而软件负责插入fence 尽管论文里也是把Weak Ordering作为一种consistency model来讲的，但是我觉得他其实算不上，他只能算是一个工程实现的模式 </description>
     </item>
     
     <item>
@@ -267,10 +252,10 @@ log
       
       <guid>https://bilosikia.github.io/posts/%E5%AD%A6%E4%B9%A0/</guid>
       <description>习惯 养成习惯，就不用单独记忆了。
-时间管理  高效率 + 高价值 两分钟能做完，立即做 收集待处理事项，记录时预估时间 需要有一个完成期限  流程其实很重要 提高自己的影响力 追求极致  写好文档  高效率 专注一件事件   体系学习，书籍优于碎片博客
-  利用碎片时间，集中于一个目标，不要用碎片时间零散学习
-  充分利用时间，不要让自己处于不知道做什么，不知道怎么做的状态
-  实践大于一切  看再多，不如自己亲手实践 把问题转化为项目 不要想着最开始覆盖所有，从最基本的开始，逐渐演进  </description>
+时间管理 高效率 + 高价值 两分钟能做完，立即做 收集待处理事项，记录时预估时间 需要有一个完成期限 流程其实很重要 提高自己的影响力 追求极致 写好文档 高效率 专注一件事件 体系学习，书籍优于碎片博客
+利用碎片时间，集中于一个目标，不要用碎片时间零散学习
+充分利用时间，不要让自己处于不知道做什么，不知道怎么做的状态
+实践大于一切 看再多，不如自己亲手实践 把问题转化为项目 不要想着最开始覆盖所有，从最基本的开始，逐渐演进 </description>
     </item>
     
     <item>
@@ -279,7 +264,7 @@ log
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://bilosikia.github.io/posts/%E6%AF%8F%E6%97%A5%E9%98%85%E8%AF%BB/</guid>
-      <description>2021-8-25  Inline In Rust 并查集  </description>
+      <description>2021-8-25 Inline In Rust 并查集 </description>
     </item>
     
   </channel>

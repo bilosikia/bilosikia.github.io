@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.97.0" />
+  <meta name="generator" content="Hugo 0.102.1" />
   <title> tokio-异步基础类型 | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/rust/tokio/tokio-%E5%BC%82%E6%AD%A5%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B/">
@@ -235,7 +235,12 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#f92672">..</span>.
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="time">time</h2>
+<p>time 是最上层的 driver，本身采用时间轮的实现方式。park 时，会得到最近的一次唤醒时间，然后调用 park_timeout 在下层 driver。
+最下层的 driver 是 io driver，io driver park_timeout 时调用 mio 的 poll 方法，并指定 timeout，从而实现 timeout 后唤醒 driver 树。</p>
+<h2 id="mio-如何唤醒-driver-树">mio 如何唤醒 driver 树</h2>
+<p>如果 runtime 添加了新的 task，而此时 driver 还可能处于 park 状态。spawn task 时，会先将任务加入 run_queue, 然后调用 driver 的 unpark。unpark 会一直调用到 io driver 的 unpark，然后调用 mio 的 waker，从 poll 中返回。</p>
+
   </div>
 
   <footer class="post-footer">
