@@ -227,7 +227,8 @@ await_suspend 的入参 coroutine_handle 是当前调用栈所属协程：
             // bool 类型，只有为 true 时，暂停协程
             <return-to-caller-or-resumer> 
         } else {
-            
+            // 执行返回的协程
+            <return-to-coroutine>
         }
         
         // 恢复点
