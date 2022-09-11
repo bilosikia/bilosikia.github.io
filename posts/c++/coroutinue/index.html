@@ -247,7 +247,8 @@
 </span></span><span style="display:flex;"><span>            <span style="color:#75715e">// bool 类型，只有为 true 时，暂停协程
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">return</span><span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>caller<span style="color:#f92672">-</span>or<span style="color:#f92672">-</span>resumer<span style="color:#f92672">&gt;</span> 
 </span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 执行返回的协程
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">return</span><span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>coroutine<span style="color:#f92672">&gt;</span>
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>        
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 恢复点
