@@ -68,8 +68,8 @@
 <p>协程的执行被分为 3 个阶段：</p>
 <ul>
 <li><strong>Suspend:</strong>  暂停当前协程的执行，返回给调用者或者恢复者</li>
-<li>**Resume：**恢复当前协程的执行</li>
-<li>**Destroy：**销毁协程栈，保持的变量，释放栈帧和内存</li>
+<li><strong>Resume</strong>：恢复当前协程的执行</li>
+<li><strong>Destroy</strong>：销毁协程栈，保持的变量，释放栈帧和内存</li>
 </ul>
 <p>由于协程可以被暂停，可以被恢复，协程的运行状态需要被保存下来。而栈会随着函数返回被销毁，故栈不能用来保存协程状态。</p>
 <p>协程会在堆上保存自己的状态。
@@ -80,32 +80,17 @@
 </ul>
 <h1 id="c20-coroutinue">c++20 coroutinue</h1>
 <ul>
-<li>
-<p>3个语言关键字，co_await, co_yield, co_return</p>
-</li>
-<li>
-<p>一些新的类型：</p>
+<li>3个语言关键字，co_await, co_yield, co_return</li>
+<li>一些新的类型：
 <ul>
-<li>
-<p>coroutine_handle</p>
-</li>
-<li>
-<p>coroutine_traits&lt;Ts…&gt;</p>
-</li>
-<li>
-<p>suspend_always</p>
-</li>
-<li>
-<p>suspend_never</p>
-</li>
+<li>coroutine_handle</li>
+<li>coroutine_traits&lt;Ts…&gt;</li>
+<li>suspend_always</li>
+<li>suspend_never</li>
 </ul>
 </li>
-<li>
-<p>库编写者可以和协程交互以及定义行为的通用机制</p>
-</li>
-<li>
-<p>更容易编写异步代码语言级设施</p>
-</li>
+<li>库编写者可以和协程交互以及定义行为的通用机制</li>
+<li>更容易编写异步代码语言级设施</li>
 </ul>
 <p>c++20 没有提供协程库，只提供了用于构造协程库的基础设施，要直接使用现有的协程基础类型编写安全的异步代码还是非常不方便的。</p>
 <p>函数体中一定要有 co_return，co_await，co_yield 三个关键字中一个，才算是一个协程。即便返回了 包含内部类 promise_type 的对象，也不是一个协程。不会有 init suspend 和 final suspend 点。</p>
