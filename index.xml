@@ -6,7 +6,31 @@
     <description>Recent content on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 26 Dec 2021 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Sep 2022 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>c&#43;&#43;20 coroutine</title>
+      <link>https://bilosikia.github.io/posts/c&#43;&#43;/coroutinue/</link>
+      <pubDate>Sun, 11 Sep 2022 14:55:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/coroutinue/</guid>
+      <description>协程 什么是协程 可以在指定位置暂停，并从暂停点恢复执行 可以有多个暂停点，可以多 次返回（generator） 协程的本地数据需要持久化 协程分类 控制传递机制: 对称/非对称（return to caller） 是否作为语言的第一类（first class）对象提供：语言特性和编译器支持有栈(stackfull) / 无栈(stackless): 是否有独立的运行时栈 协程 coroutine frame 协程的执行被分为 3 个阶段：
+Suspend: 暂停当前协程的执行，返回给调用者或者恢复者 **Resume：**恢复当前协程的执行 **Destroy：**销毁协程栈，保持的变量，释放栈帧和内存 由于协程可以被暂停，可以被恢复，协程的运行状态需要被保存下来。而栈会随着函数返回被销毁，故栈不能用来保存协程状态。
+协程会在堆上保存自己的状态。 可以简单认为运行的协程有两部分组成：
+stack frame：普通的函数栈帧，会随着协作暂停而销毁，会随着协程恢复而创建。 coroutine frame：堆上的协程栈，会保存跨暂停点的变量，在协程暂停时，会保存暂停点用于后续恢复，保存调用的协程返回值。 c++20 coroutinue 3个语言关键字，co_await, co_yield, co_return
+一些新的类型：
+coroutine_handle
+coroutine_traits&amp;lt;Ts…&amp;gt;
+suspend_always
+suspend_never
+库编写者可以和协程交互以及定义行为的通用机制
+更容易编写异步代码语言级设施
+c++20 没有提供协程库，只提供了用于构造协程库的基础设施，要直接使用现有的协程基础类型编写安全的异步代码还是非常不方便的。
+函数体中一定要有 co_return，co_await，co_yield 三个关键字中一个，才算是一个协程。即便返回了 包含内部类 promise_type 的对象，也不是一个协程。不会有 init suspend 和 final suspend 点。
+协程接口 c++ 标准定义了两个接口：
+Promise interfac：用来控制协程的行为
+定义协程被调用时的行为 定义协程返回时的行为 定义co_await or co_yield 表达式的行为 Awaitable interface：用来定义 co_await 表达式的语义</description>
+    </item>
+    
     <item>
       <title>协变&amp;逆变</title>
       <link>https://bilosikia.github.io/posts/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/</link>
