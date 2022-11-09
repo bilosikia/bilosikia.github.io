@@ -129,7 +129,7 @@ coroutine_traits 是标准库定义的一个 trait，可以根据定义的协程
 
 什么是 awaiter?
 
-满足 co_await 运算符必要的函数定义。
+满足 co_await 运算符的函数定义。
 
 ```C++
 struct Awaiter {

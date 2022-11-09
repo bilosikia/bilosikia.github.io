@@ -20,6 +20,7 @@ date: 2021-06-09T14:55:59+08:00
 - n & -n returns the **rightmost 1 bit in n**.
 
 - n & (n - 1) 消除最右 1
+
 - X % 2^n = X & (2^n - 1)，环形队列，时间轮实现
 
 - GUARDED_BY
@@ -39,6 +40,8 @@ date: 2021-06-09T14:55:59+08:00
 - 对 cast 完的指针就行 dereference 是 UB(TBAA 优化)
 
   ![image-20210720164420645](/Users/gaokuilin/Library/Application Support/typora-user-images/image-20210720164420645.png)
+
+- [cmake变量](https://mp.weixin.qq.com/s?__biz=MzU1OTgxNDY0Ng==&mid=2247483723&idx=1&sn=c9569b2ba072a6c32c231199a18be699&chksm=fc10c3d2cb674ac4c44f7c834b4a238e0f95363b99d206650bf161be749cebf1ba08c0da7354&token=2028512086&lang=zh_CN#rd)
 
 ## template 
 
@@ -83,6 +86,8 @@ date: 2021-06-09T14:55:59+08:00
 - [&'static T vs T: 'static](https://doc.rust-lang.org/rust-by-example/scope/lifetime/static_lifetime.html)
 
 - MutexGuard !send but sync
+
+- [[slice](https://doc.rust-lang.org/std/slice/index.html)::[from_ref](https://doc.rust-lang.org/std/slice/fn.from_ref.html#)]
 
 # 网络
 
