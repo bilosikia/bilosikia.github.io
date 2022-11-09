@@ -3,10 +3,10 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.102.3" />
+  <meta name="generator" content="Hugo 0.105.0">
   <title> c&#43;&#43;20 coroutine | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
-  <link rel="canonical" href="https://bilosikia.github.io/posts/c&#43;&#43;/coroutinue/">
+  <link rel="canonical" href="https://bilosikia.github.io/posts/c&#43;&#43;/coroutine/">
   <link rel="alternate" type="application/rss+xml" href="" title="bilosikia">
   
   
@@ -166,7 +166,7 @@
 <p>一般情况下，协程的库都会定义一个协程返回类型，如 cppcoro 定义的 <a href="https://github.com/lewissbaker/cppcoro/blob/master/include/cppcoro/task.hpp">task</a>。</p>
 <h1 id="awaitable--awaiter">awaitable &amp; awaiter</h1>
 <p>什么是 awaiter?</p>
-<p>满足 co_await 运算符必要的函数定义。</p>
+<p>满足 co_await 运算符的函数定义。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Awaiter</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当前协程是否 ready
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 在操作同步完成而不需要挂起的情况下，可以避免 &lt;suspend-coroutine&gt; 操作的成本

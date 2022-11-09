@@ -9,10 +9,10 @@
     <lastBuildDate>Sun, 11 Sep 2022 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>c&#43;&#43;20 coroutine</title>
-      <link>https://bilosikia.github.io/posts/c&#43;&#43;/coroutinue/</link>
+      <link>https://bilosikia.github.io/posts/c&#43;&#43;/coroutine/</link>
       <pubDate>Sun, 11 Sep 2022 14:55:59 +0800</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/coroutinue/</guid>
+      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/coroutine/</guid>
       <description>协程 什么是协程 可以在指定位置暂停，并从暂停点恢复执行 可以有多个暂停点，可以多 次返回（generator） 协程的本地数据需要持久化 协程分类 控制传递机制: 对称/非对称（return to caller） 是否作为语言的第一类（first class）对象提供：语言特性和编译器支持有栈(stackfull) / 无栈(stackless): 是否有独立的运行时栈 协程 coroutine frame 协程的执行被分为 3 个阶段：
 Suspend: 暂停当前协程的执行，返回给调用者或者恢复者 Resume：恢复当前协程的执行 Destroy：销毁协程栈，保持的变量，释放栈帧和内存 由于协程可以被暂停，可以被恢复，协程的运行状态需要被保存下来。而栈会随着函数返回被销毁，故栈不能用来保存协程状态。
 协程会在堆上保存自己的状态。 可以简单认为运行的协程有两部分组成：
