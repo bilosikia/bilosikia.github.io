@@ -6,7 +6,18 @@
     <description>Recent content on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 11 Sep 2022 14:55:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 29 Dec 2022 17:52:54 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>rust Pin Project</title>
+      <link>https://bilosikia.github.io/posts/rust/rust-pin-project/</link>
+      <pubDate>Thu, 29 Dec 2022 17:52:54 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/rust/rust-pin-project/</guid>
+      <description>再谈 pin 语义 在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin&amp;lt;P&amp;gt; 获得类似 &amp;amp;mut T的指针，从而能确保 T 不会 move。 一旦 Pin&amp;lt;P&amp;gt; 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。
+但在后来思考为什么 map_unchecked 是 unsafe 时，才发现之前对 Pin 的语义理解存在问题。 map_unchecked 的 Self 类型等同于 Pin&amp;lt;&amp;amp;T&amp;gt;，通过一个 FnOnce(&amp;amp;T) -&amp;gt; &amp;amp;U 将 &amp;amp;T 映射为 &amp;amp;U，不管是 Pin&amp;lt;&amp;amp;T&amp;gt; 还是 FnOnce(&amp;amp;T) -&amp;gt; &amp;amp;U，都仅仅只是 &amp;amp;，都没有 move T 的可能，为什么该函数却是 unsafe 的呢？ 在重新阅读了 pin 的文档后，有一个很重要的点被我遗漏了：
+At a high level, a Pin``&amp;lt;P&amp;gt; ensures that the pointee of any pointer type P has a stable location in memory, meaning it cannot be moved elsewhere and its memory cannot be deallocated until it gets dropped.</description>
+    </item>
+    
     <item>
       <title>c&#43;&#43;20 coroutine</title>
       <link>https://bilosikia.github.io/posts/c&#43;&#43;/coroutine/</link>
@@ -259,6 +270,17 @@ log
       
       <guid>https://bilosikia.github.io/posts/rust/rust-micro-scope/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://bilosikia.github.io/posts/tools/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/tools/</guid>
+      <description>item2 使用 clion 打开文件，并跳转到对应行号
+Clion Tools &amp;gt; Create Commandline Launcher Item2 Preferences, Profiles, Advanced, Semantic History, &amp;ldquo;/usr/local/bin/clion &amp;ndash;line \2 \1&amp;rdquo; item2 设置 solarized light 配色
+Preferences, Profiles, Advanced, Colors, Colors Prosets</description>
     </item>
     
     <item>

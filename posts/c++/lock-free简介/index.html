@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.105.0">
+  <meta name="generator" content="Hugo 0.109.0">
   <title> Lock-Free简介 | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/">
@@ -183,7 +183,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> b<span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; 
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">如果只有一个线程执行，</span>b可能先于a执行<span style="color:#960050;background-color:#1e0010">，但是</span>a happens<span style="color:#f92672">-</span>before b.
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">如果只有一个线程执行，</span>b<span style="color:#960050;background-color:#1e0010">可能先于</span>a<span style="color:#960050;background-color:#1e0010">执行，但是</span>a happens<span style="color:#f92672">-</span>before b.
 </span></span></code></pre></div><p>作用：明确内存访问/修改顺序，同步。</p>
 </li>
 </ul>

@@ -3,7 +3,7 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Hugo 0.105.0">
+  <meta name="generator" content="Hugo 0.109.0">
   <title> rust Pin &amp; Unpin | bilosikia </title>
   <link rel="stylesheet" href="https://bilosikia.github.io/css/simpleness.css">
   <link rel="canonical" href="https://bilosikia.github.io/posts/rust/rust-pin-unpin/">
@@ -216,7 +216,7 @@
 </span></span></code></pre></div><ul>
 <li>into_inner，由于实现 Unpin 的类型是可以安全 move 的，所有可以直接获取到内部指针。</li>
 <li>into_inner_unchecked，没有实现 Unpin 的类型，获得内部指针是 unsafe 的。 如 P 是 &amp;mut, 需要避免在 unsafe 代码中调用 swap 和 replace。</li>
-<li>new_unchecked，没有实现 Unpin 的类型，通过该方法创建 Pin 是 unsafe 的，因为创建时，没有办法保证该指针所指的对象是没有被移动的，即需要用户保证数据是有效的。</li>
+<li>new_unchecked，没有实现 Unpin 的类型，通过该方法创建 Pin 是 unsafe 的，因为创建时，没有办法保证该指针所指的对象是没有被移动的（在 pin 之前），即需要用户保证数据是有效的。</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-RUST" data-lang="RUST"><span style="display:flex;"><span><span style="color:#66d9ef">impl</span><span style="color:#f92672">&lt;</span>P: <span style="color:#a6e22e">DerefMut</span><span style="color:#f92672">&gt;</span> Pin<span style="color:#f92672">&lt;</span>P<span style="color:#f92672">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">pub</span> <span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">as_mut</span>(<span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> self) -&gt; <span style="color:#a6e22e">Pin</span><span style="color:#f92672">&lt;&amp;</span><span style="color:#66d9ef">mut</span> P::Target<span style="color:#f92672">&gt;</span> {
