@@ -6,7 +6,7 @@ date: 2022-12-29T17:52:54+08:00
 
 # 再谈 pin 语义
 
-在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin<P<T>> 获得类似 &mut T的指针，从而能确保 T 不会 move。 一旦 Pin<P<T>> 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。
+在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin<P<T>> 获得类似 &mut T 指针，从而能确保 T 不会 move。 一旦 Pin<P<T>> 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。
 
 但在后来思考为什么 [map_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked) 是 unsafe 时，才发现之前对 Pin 的语义理解存在问题。 [map_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked) 的 Self 类型等同于 Pin<&T>，通过一个 FnOnce(&T) -> &U 将 &T 映射为 &U，不管是 Pin<&T> 还是 FnOnce(&T) -> &U，都仅仅只是 &，都没有 move T 的可能，为什么该函数却是 unsafe 的呢？ 在重新阅读了 pin 的文档后，有一个很重要的点被我遗漏了：
 
