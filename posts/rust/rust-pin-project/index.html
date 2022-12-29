@@ -53,7 +53,7 @@
 
   <div class="post-text">
     <h1 id="再谈-pin-语义">再谈 pin 语义</h1>
-<p>在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin&lt;P<!-- raw HTML omitted -->&gt; 获得类似 &amp;mut T的指针，从而能确保 T 不会 move。 一旦 Pin&lt;P<!-- raw HTML omitted -->&gt; 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。</p>
+<p>在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin&lt;P<!-- raw HTML omitted -->&gt; 获得类似 &amp;mut T 指针，从而能确保 T 不会 move。 一旦 Pin&lt;P<!-- raw HTML omitted -->&gt; 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。</p>
 <p>但在后来思考为什么 <a href="https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked">map_unchecked</a> 是 unsafe 时，才发现之前对 Pin 的语义理解存在问题。 <a href="https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked">map_unchecked</a> 的 Self 类型等同于 Pin&lt;&amp;T&gt;，通过一个 FnOnce(&amp;T) -&gt; &amp;U 将 &amp;T 映射为 &amp;U，不管是 Pin&lt;&amp;T&gt; 还是 FnOnce(&amp;T) -&gt; &amp;U，都仅仅只是 &amp;，都没有 move T 的可能，为什么该函数却是 unsafe 的呢？ 在重新阅读了 pin 的文档后，有一个很重要的点被我遗漏了：</p>
 <blockquote>
 <p>At a high level, a <code>Pin``&lt;P&gt;</code> ensures that the pointee of any pointer type <code>P</code> has a stable location in memory, meaning it cannot be moved elsewhere and its memory cannot be deallocated until <strong>it gets dropped.</strong></p>
