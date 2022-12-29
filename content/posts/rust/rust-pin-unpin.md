@@ -204,7 +204,7 @@ impl<P: Deref> Pin<P> {
 
 - into_inner，由于实现 Unpin 的类型是可以安全 move 的，所有可以直接获取到内部指针。
 - into_inner_unchecked，没有实现 Unpin 的类型，获得内部指针是 unsafe 的。 如 P 是 &mut, 需要避免在 unsafe 代码中调用 swap 和 replace。
-- new_unchecked，没有实现 Unpin 的类型，通过该方法创建 Pin 是 unsafe 的，因为创建时，没有办法保证该指针所指的对象是没有被移动的，即需要用户保证数据是有效的。
+- new_unchecked，没有实现 Unpin 的类型，通过该方法创建 Pin 是 unsafe 的，因为创建时，没有办法保证该指针所指的对象是没有被移动的（在 pin 之前），即需要用户保证数据是有效的。
 
 ```RUST
 impl<P: DerefMut> Pin<P> {
@@ -220,6 +220,8 @@ impl<P: DerefMut> Pin<P> {
 ```
 
 - 提供了修改 Pin 所指对象值的方法，被指向的对象可以直接给覆盖，但是依然无法移动该对象。
+
+
 
 ## 参考：
 

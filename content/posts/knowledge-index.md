@@ -43,6 +43,8 @@ date: 2021-06-09T14:55:59+08:00
 
 - [cmake变量](https://mp.weixin.qq.com/s?__biz=MzU1OTgxNDY0Ng==&mid=2247483723&idx=1&sn=c9569b2ba072a6c32c231199a18be699&chksm=fc10c3d2cb674ac4c44f7c834b4a238e0f95363b99d206650bf161be749cebf1ba08c0da7354&token=2028512086&lang=zh_CN#rd)
 
+- [Why Memory Barriers](http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html)
+
 ## template 
 
 - 测试类型
