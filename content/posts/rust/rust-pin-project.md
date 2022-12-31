@@ -6,7 +6,7 @@ date: 2022-12-29T17:52:54+08:00
 
 # 再谈 pin 语义
 
-在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin<P<T>> 获得类似 &mut T 指针，从而能确保 T 不会 move。 一旦 Pin<P<T>> 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。
+在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin<P<T>> 获得类似 &mut T的指针，从而能确保 T 不会 move。 一旦 Pin<P<T>> 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。
 
 但在后来思考为什么 [map_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked) 是 unsafe 时，才发现之前对 Pin 的语义理解存在问题。 [map_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked) 的 Self 类型等同于 Pin<&T>，通过一个 FnOnce(&T) -> &U 将 &T 映射为 &U，不管是 Pin<&T> 还是 FnOnce(&T) -> &U，都仅仅只是 &，都没有 move T 的可能，为什么该函数却是 unsafe 的呢？ 在重新阅读了 pin 的文档后，有一个很重要的点被我遗漏了：
 
@@ -60,5 +60,20 @@ fn move_pinned_ref<T>(mut a: T, mut b: T) {
 - 通过定义 assert 辅助函数，确保无法为 #[repr(packed)] 添加 #[pin_project] 宏，详见[这儿](https://github.com/taiki-e/pin-project/pull/34)。
 - 而其他的约束，比如 [Drop guarantee](https://doc.rust-lang.org/std/pin/index.html#drop-guarantee)，通过 Pin<P<T>> 移动，本身都需要 unfase，仅使用 safe 代码是无法违背这些约束的。
 
-pin-project 的文档对理解 pin 有巨大的帮助，想要深入理解 pin，熟悉 pin-project 是必不可少的。
+值得注意的是，使用 pin-project 时，如果没有字段使用 #[pin], 即便结构中有实现 !Unpin 的字段，pin-project 也会结构实现 Unpin。
 
+```Rust
+use std::marker::PhantomPinned;
+use pin_project::pin_project;
+
+#[pin_project]struct Struct<T> {
+    field: T,
+    #[pin] // <------ This `#[pin]` is required to make `Struct` to `!Unpin`.
+    _pin: PhantomPinned,
+}
+// Note that using PhantomPinned without #[pin] attribute has no effect.
+```
+
+当所有字段都没有使用 #[pin]，则意味着所有字段都可以从 Pin<P<T>> 获得 &mut Field，则相当于整个结构没有被 Pin 住，故 pin-project 会为 T 实现 Unpin。这和 Unpin 的自动实现规则不同，使用 pin-project 时，我们需要手动通过 #[pin] 指定哪些字段需要 **structural**，如果不指定，默认为 **non-structural。**
+
+pin-project 的文档对理解 pin 有巨大的帮助，想要深入理解 pin，熟悉 pin-project 是必不可少的。

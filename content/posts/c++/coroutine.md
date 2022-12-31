@@ -127,9 +127,9 @@ coroutine_traits 是标准库定义的一个 trait，可以根据定义的协程
 
 # awaitable & awaiter
 
-什么是 awaiter?
+什么是 awaiter? 
 
-满足 co_await 运算符的函数定义。
+满足 co_await 运算符函数定义的对象。
 
 ```C++
 struct Awaiter {
@@ -204,6 +204,8 @@ await_suspend 的入参 coroutine_handle 是当前调用栈所属协程：
 - 非 FinalAwaiter 时，协程已暂停，为协程调用方的 coroutine_handle。
 - FinalAwaiter 时，此时调用方为 FinalAwaiter 所在协程。
 
+await 表达式编译器生成的伪代码：
+
 ```C++
 {
     auto&& value = <expr>;
@@ -238,6 +240,10 @@ await_suspend 的入参 coroutine_handle 是当前调用栈所属协程：
     return awaiter.await_resume();
 }
 ```
+
+awaiter 是协程之间通信的桥梁，co_await 一个协程时，会询问协程你当前 ready 没有，如果 ready 了，那我就获取你的结果，如果没有 ready，请告诉我应该怎么办，我是应该返回上一级，还是我应该执行其他协程。c++ 协程方案没有协程的调用器，需要由库来实现，awaiter 也是调度器实现的关键。
+
+注意区分 co_await 和 co_return 的区别，co_await 是等待其他协程的结果，co_return 是为当前协程返回值，但协程的返回值如果让等待的协程获取呢？还是得通过 awaiter 的 await_resume 函数。co_return 通过调用 promise_type 的 return_value 函数，将结果保存在协程对象中，co_await 时在通过 await_resume 取回。
 
 # 协程例子
 
@@ -384,7 +390,7 @@ struct LeafTask {
             return false;
         }
 
-        // cont 是 FinalAwaiter 所在协程, 而不是
+        // cont 是 FinalAwaiter 所在协程
         std::experimental::coroutine_handle<>
         await_suspend(std::experimental::coroutine_handle<promise_type> cont) noexcept {
             std::cout << "LeafTask FinalAwaiter await_suspend: cont= " << cont.address() << std::endl;

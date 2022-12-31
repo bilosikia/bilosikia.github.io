@@ -45,6 +45,8 @@ date: 2021-06-09T14:55:59+08:00
 
 - [Why Memory Barriers](http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html)
 
+- [jemalloc](https://mp.weixin.qq.com/s/fB0IILuBBuk_YrKNjW_3Ag)
+
 ## template 
 
 - 测试类型
