@@ -53,7 +53,7 @@
 
   <div class="post-text">
     <h1 id="再谈-pin-语义">再谈 pin 语义</h1>
-<p>在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin&lt;P<!-- raw HTML omitted -->&gt; 获得类似 &amp;mut T 指针，从而能确保 T 不会 move。 一旦 Pin&lt;P<!-- raw HTML omitted -->&gt; 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。</p>
+<p>在之前，我一直以为 pin 的作用仅仅是通过无法从 Pin&lt;P<!-- raw HTML omitted -->&gt; 获得类似 &amp;mut T的指针，从而能确保 T 不会 move。 一旦 Pin&lt;P<!-- raw HTML omitted -->&gt; 离开作用域被 drop 时，T 就不在受 Pin 的约束了，语法上就可以被 move。</p>
 <p>但在后来思考为什么 <a href="https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked">map_unchecked</a> 是 unsafe 时，才发现之前对 Pin 的语义理解存在问题。 <a href="https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked">map_unchecked</a> 的 Self 类型等同于 Pin&lt;&amp;T&gt;，通过一个 FnOnce(&amp;T) -&gt; &amp;U 将 &amp;T 映射为 &amp;U，不管是 Pin&lt;&amp;T&gt; 还是 FnOnce(&amp;T) -&gt; &amp;U，都仅仅只是 &amp;，都没有 move T 的可能，为什么该函数却是 unsafe 的呢？ 在重新阅读了 pin 的文档后，有一个很重要的点被我遗漏了：</p>
 <blockquote>
 <p>At a high level, a <code>Pin``&lt;P&gt;</code> ensures that the pointee of any pointer type <code>P</code> has a stable location in memory, meaning it cannot be moved elsewhere and its memory cannot be deallocated until <strong>it gets dropped.</strong></p>
@@ -95,6 +95,17 @@
 <li>通过定义 assert 辅助函数，确保无法为 #[repr(packed)] 添加 #[pin_project] 宏，详见<a href="https://github.com/taiki-e/pin-project/pull/34">这儿</a>。</li>
 <li>而其他的约束，比如 <a href="https://doc.rust-lang.org/std/pin/index.html#drop-guarantee">Drop guarantee</a>，通过 Pin&lt;P<!-- raw HTML omitted -->&gt; 移动，本身都需要 unfase，仅使用 safe 代码是无法违背这些约束的。</li>
 </ul>
+<p>值得注意的是，使用 pin-project 时，如果没有字段使用 #[pin], 即便结构中有实现 !Unpin 的字段，pin-project 也会结构实现 Unpin。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::marker::PhantomPinned;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> pin_project::pin_project;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#[pin_project]</span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Struct</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    field: <span style="color:#a6e22e">T</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#[pin]</span> <span style="color:#75715e">// &lt;------ This `#[pin]` is required to make `Struct` to `!Unpin`.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    _pin: <span style="color:#a6e22e">PhantomPinned</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Note that using PhantomPinned without #[pin] attribute has no effect.
+</span></span></span></code></pre></div><p>当所有字段都没有使用 #[pin]，则意味着所有字段都可以从 Pin&lt;P<!-- raw HTML omitted -->&gt; 获得 &amp;mut Field，则相当于整个结构没有被 Pin 住，故 pin-project 会为 T 实现 Unpin。这和 Unpin 的自动实现规则不同，使用 pin-project 时，我们需要手动通过 #[pin] 指定哪些字段需要 <strong>structural</strong>，如果不指定，默认为 <strong>non-structural。</strong></p>
 <p>pin-project 的文档对理解 pin 有巨大的帮助，想要深入理解 pin，熟悉 pin-project 是必不可少的。</p>
 
   </div>
