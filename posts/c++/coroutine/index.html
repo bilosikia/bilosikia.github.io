@@ -166,7 +166,7 @@
 <p>一般情况下，协程的库都会定义一个协程返回类型，如 cppcoro 定义的 <a href="https://github.com/lewissbaker/cppcoro/blob/master/include/cppcoro/task.hpp">task</a>。</p>
 <h1 id="awaitable--awaiter">awaitable &amp; awaiter</h1>
 <p>什么是 awaiter?</p>
-<p>满足 co_await 运算符的函数定义。</p>
+<p>满足 co_await 运算符函数定义的对象。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Awaiter</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 当前协程是否 ready
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 在操作同步完成而不需要挂起的情况下，可以避免 &lt;suspend-coroutine&gt; 操作的成本
@@ -225,6 +225,7 @@
 <li>非 FinalAwaiter 时，协程已暂停，为协程调用方的 coroutine_handle。</li>
 <li>FinalAwaiter 时，此时调用方为 FinalAwaiter 所在协程。</li>
 </ul>
+<p>await 表达式编译器生成的伪代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> value <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;</span>expr<span style="color:#f92672">&gt;</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> awaitable <span style="color:#f92672">=</span> get_awaitable(promise, <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">decltype</span>(value)<span style="color:#f92672">&gt;</span>(value));
@@ -257,7 +258,9 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 获取操作的结果
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> awaiter.await_resume();
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h1 id="协程例子">协程例子</h1>
+</span></span></code></pre></div><p>awaiter 是协程之间通信的桥梁，co_await 一个协程时，会询问协程你当前 ready 没有，如果 ready 了，那我就获取你的结果，如果没有 ready，请告诉我应该怎么办，我是应该返回上一级，还是我应该执行其他协程。c++ 协程方案没有协程的调用器，需要由库来实现，awaiter 也是调度器实现的关键。</p>
+<p>注意区分 co_await 和 co_return 的区别，co_await 是等待其他协程的结果，co_return 是为当前协程返回值，但协程的返回值如果让等待的协程获取呢？还是得通过 awaiter 的 await_resume 函数。co_return 通过调用 promise_type 的 return_value 函数，将结果保存在协程对象中，co_await 时在通过 await_resume 取回。</p>
+<h1 id="协程例子">协程例子</h1>
 <p>调用关系：TopTask -&gt; MiddleTask -&gt; LeafTask</p>
 <p>唤醒关系：LeafTask::awaiter::await_suspend -&gt;  LeafTask::FinalAwaiter::await_suspend -&gt;MiddleTask::resume -&gt; MiddleTask::FinalAwaiter::await_suspend -&gt; TopTask::resume</p>
 <p>注意，唤醒之后，协程在另一个线程中运行</p>
