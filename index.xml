@@ -9,10 +9,10 @@
     <lastBuildDate>Sat, 25 Feb 2023 18:23:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>mimalloc 实现分析</title>
-      <link>https://bilosikia.github.io/posts/c&#43;&#43;/mimalloc-%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</link>
+      <link>https://bilosikia.github.io/posts/c&#43;&#43;/mimalloc/</link>
       <pubDate>Sat, 25 Feb 2023 18:23:59 +0800</pubDate>
       
-      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/mimalloc-%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</guid>
+      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/mimalloc/</guid>
       <description>内存管理 Allocator 主要解决的问题包括：
 高性能的内存分配 避免内存碎片化，包括内部碎片和外部碎片 Slab 系统用来实现对象缓存池 安全性保障 统计分析能力 高性能的内存分配是 allocator 永恒的主题。目前 allocator 的一般思路包括：
 减少线程间的竞争与同步，如 thread local cache，划分不同的 arena 按照 size 和 object 划分的 slab 系统 伙伴系统来减少外部碎片化 lock-free 的实现优化 对 huge allocate 进行特殊实现 Mimalloc 原理概述 先介绍下 mimalloc 中的几个术语：
@@ -176,24 +176,6 @@ INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事�
       <guid>https://bilosikia.github.io/posts/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/</guid>
       <description>基本概念 Wait-freedom: Wait-freedom means that each thread moves forward regardless of external factors like contention from other threads, other thread blocking. Each operations is executed in a bounded number of steps. It&amp;rsquo;s the strongest guarantee for synchronization algorithms.
 Lock-freedom: Lock-freedom means that a system as a whole moves forward regardless of anything. Forward progress for each individual thread is not guaranteed (that is, individual threads can starve). It&amp;rsquo;s a weaker guarantee than wait-freedom.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://bilosikia.github.io/posts/etcd-raft/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://bilosikia.github.io/posts/etcd-raft/</guid>
-      <description>etcd raft </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://bilosikia.github.io/posts/qa/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://bilosikia.github.io/posts/qa/</guid>
-      <description>DB 自增主键和 uuid </description>
     </item>
     
     <item>
