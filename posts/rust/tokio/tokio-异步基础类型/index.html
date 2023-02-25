@@ -50,6 +50,19 @@
   </header>
 
   
+  <div class="post-toc">
+    <div class="post-toc-title">Contents</div>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#fs">fs</a></li>
+    <li><a href="#channel">Channel</a></li>
+    <li><a href="#time">time</a></li>
+    <li><a href="#mio-如何唤醒-driver-树">mio 如何唤醒 driver 树</a></li>
+    <li><a href="#底层的-taskmio-事件是何时添加的">底层的 task，mio 事件是何时添加的？</a></li>
+  </ul>
+</nav>
+  </div>
+  
 
   <div class="post-text">
     <p>为了适配 async 模型，tokio 重新实现了标准库中的 fs，net，channel 等模块，提供想对应的 async 方法。</p>
@@ -263,6 +276,44 @@
 </body>
   
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js" integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
+<script>
+    (function() {
+        var $toc = $('#TableOfContents');
+        if ($toc.length > 0) {
+            var $window = $(window);
+
+            function onScroll(){
+                var currentScroll = $window.scrollTop();
+                var h = $('.post-text h1, .post-text h2, .post-text h3, .post-text h4, .post-text h5, .post-text h6');
+                var id = "";
+                h.each(function (i, e) {
+                    e = $(e);
+                    if (e.offset().top - 10 <= currentScroll) {
+                        id = e.attr('id');
+                    }
+                });
+                var active = $toc.find('a.active');
+                if (active.length == 1 && active.eq(0).attr('href') == '#' + id) return true;
+
+                active.each(function (i, e) {
+                    $(e).removeClass('active').siblings('ul').hide();
+                });
+                $toc.find('a[href="#' + id + '"]').parentsUntil('#TableOfContents').each(function (i, e) {
+                    $(e).children('a').addClass('active').siblings('ul').show();
+                });
+            }
+
+            $window.on('scroll', onScroll);
+            $(document).ready(function() {
+                $toc.find('a').parent('li').find('ul').hide();
+                onScroll();
+                document.getElementsByClassName('post-toc')[0].style.display = '';
+            });
+        }
+    })();
+</script>
 
 
 </html>

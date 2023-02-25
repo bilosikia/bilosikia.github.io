@@ -50,6 +50,21 @@
   </header>
 
   
+  <div class="post-toc">
+    <div class="post-toc-title">Contents</div>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#如何在-rust-中实现一个自引用的数据结构">如何在 Rust 中实现一个自引用的数据结构</a></li>
+    <li><a href="#通过原始指针实现自引用">通过原始指针实现自引用</a></li>
+    <li><a href="#rust-中的move">Rust 中的move</a></li>
+    <li><a href="#异步代码中的自引用">异步代码中的自引用</a></li>
+    <li><a href="#pin--unpin">Pin &amp; Unpin</a></li>
+    <li><a href="#pin-的实现原理">Pin 的实现原理</a></li>
+    <li><a href="#参考">参考：</a></li>
+  </ul>
+</nav>
+  </div>
+  
 
   <div class="post-text">
     <h2 id="如何在-rust-中实现一个自引用的数据结构">如何在 Rust 中实现一个自引用的数据结构</h2>
@@ -254,6 +269,44 @@
 </body>
   
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.slim.min.js" integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"></script>
+<script>
+    (function() {
+        var $toc = $('#TableOfContents');
+        if ($toc.length > 0) {
+            var $window = $(window);
+
+            function onScroll(){
+                var currentScroll = $window.scrollTop();
+                var h = $('.post-text h1, .post-text h2, .post-text h3, .post-text h4, .post-text h5, .post-text h6');
+                var id = "";
+                h.each(function (i, e) {
+                    e = $(e);
+                    if (e.offset().top - 10 <= currentScroll) {
+                        id = e.attr('id');
+                    }
+                });
+                var active = $toc.find('a.active');
+                if (active.length == 1 && active.eq(0).attr('href') == '#' + id) return true;
+
+                active.each(function (i, e) {
+                    $(e).removeClass('active').siblings('ul').hide();
+                });
+                $toc.find('a[href="#' + id + '"]').parentsUntil('#TableOfContents').each(function (i, e) {
+                    $(e).children('a').addClass('active').siblings('ul').show();
+                });
+            }
+
+            $window.on('scroll', onScroll);
+            $(document).ready(function() {
+                $toc.find('a').parent('li').find('ul').hide();
+                onScroll();
+                document.getElementsByClassName('post-toc')[0].style.display = '';
+            });
+        }
+    })();
+</script>
 
 
 </html>
