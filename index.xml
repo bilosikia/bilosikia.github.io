@@ -6,7 +6,19 @@
     <description>Recent content on bilosikia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 29 Dec 2022 17:52:54 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Feb 2023 18:23:59 +0800</lastBuildDate><atom:link href="https://bilosikia.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mimalloc 实现分析</title>
+      <link>https://bilosikia.github.io/posts/c&#43;&#43;/mimalloc-%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</link>
+      <pubDate>Sat, 25 Feb 2023 18:23:59 +0800</pubDate>
+      
+      <guid>https://bilosikia.github.io/posts/c&#43;&#43;/mimalloc-%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</guid>
+      <description>内存管理 Allocator 主要解决的问题包括：
+高性能的内存分配 避免内存碎片化，包括内部碎片和外部碎片 Slab 系统用来实现对象缓存池 安全性保障 统计分析能力 高性能的内存分配是 allocator 永恒的主题。目前 allocator 的一般思路包括：
+减少线程间的竞争与同步，如 thread local cache，划分不同的 arena 按照 size 和 object 划分的 slab 系统 伙伴系统来减少外部碎片化 lock-free 的实现优化 对 huge allocate 进行特殊实现 Mimalloc 原理概述 先介绍下 mimalloc 中的几个术语：
+heap：每个线程一个默认 heap，线程所有的内存分配都经由本线程的 heap 完成分配。mimalloc 提供的 mi_heap_new api 也允许为线程创建另外的 heap，通过 mi_heap_malloc 完成在该 heap 上进行内存分配，mi_malloc 会在默认 heap 上进行分配。 segment：一个 segment 是一块大的内存(8MB on x64)，是实际从 os 中分配内存，然后用于 malloc 的内存区域，heap 只是用来管理 segment 和 page。2.0 之后的版本，一个 segment 被划分为多个 slice，多个 slice 可以组成一个 page，segment 对 slice 和 page 进行管理。同时 segments 的 metadata 也保存在 segment 开头几个 slice 中。一个 heap 可以有多个 segment，但 heap 并不对 segment 进行直接管理，heap 对 page 进行管理，但通过 page 可以得到 page 所在的 segment。 page：非内核的 memory page，指一大块内存，可能包含多个 memory page。 一个 segment 按照不同的 block size 可以划分为不同大小的 pages，一个 page 由一个或多个 slices 组成。一个 page 内，划分为多个同大小的 block， page 由 3 个 free-list（free-list, local-free-list, thread-free-list）对 blocks 进行管理。 block：最小的分配单元。一个 page 被划分为多个同大小的 blocks。 tld: 线程局部数据（mi_tld_t），用来保存线程相关数据，如线程的 heap 指针等。 arena: 不同的 allocator 有不同的含义，在 mimalloc 中，arena 代表 os 内存用于分配 large-block( 大于等于4MiB)。不同于 segment，arena 是被多个线程共享的。可能需要 arena 的场景包括将已有的大块内存整合进 mimalloc（可能通过 sbrk 获得的内存，mimalloc 主要使用 mmap），使用方式可以参考 arena 提供的相关 api，本篇不会重点介绍 arena。 Mimalloc 为每个线程分配一个 heap，所有的分配和释放都只能通过该 heap(除非线程终止，会 abondon 到主线程)，从而减少线程间的竞争，同时增加了局部性。page 有 3 个 free-list:</description>
+    </item>
+    
     <item>
       <title>rust Pin Project</title>
       <link>https://bilosikia.github.io/posts/rust/rust-pin-project/</link>
