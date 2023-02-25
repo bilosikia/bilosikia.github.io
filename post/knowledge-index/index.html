@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>knowledge index - bilosikia</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="bilosikia" /><meta name="description" content="Linux 再谈 slab 伙伴算法 Socket write &amp;amp; read seq锁 惊群效应 BBR cache c&#43;&#43; 取二进制最右非 0 位：n &amp;amp; (~(n - 1)), 但是有溢出的风险 n &amp;amp; -n returns the rightmost 1 bit in n. n &amp;amp; (n - 1) 消除最右 1 X % 2^n =" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.110.0 with theme even" />
+
+
+<link rel="canonical" href="https://bilosikia.github.io/post/knowledge-index/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="knowledge index" />
+<meta property="og:description" content="Linux 再谈 slab 伙伴算法 Socket write &amp; read seq锁 惊群效应 BBR cache c&#43;&#43; 取二进制最右非 0 位：n &amp; (~(n - 1)), 但是有溢出的风险 n &amp; -n returns the rightmost 1 bit in n. n &amp; (n - 1) 消除最右 1 X % 2^n =" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bilosikia.github.io/post/knowledge-index/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-06-09T14:55:59+08:00" />
+<meta property="article:modified_time" content="2021-06-09T14:55:59+08:00" />
+<meta itemprop="name" content="knowledge index">
+<meta itemprop="description" content="Linux 再谈 slab 伙伴算法 Socket write &amp; read seq锁 惊群效应 BBR cache c&#43;&#43; 取二进制最右非 0 位：n &amp; (~(n - 1)), 但是有溢出的风险 n &amp; -n returns the rightmost 1 bit in n. n &amp; (n - 1) 消除最右 1 X % 2^n ="><meta itemprop="datePublished" content="2021-06-09T14:55:59+08:00" />
+<meta itemprop="dateModified" content="2021-06-09T14:55:59+08:00" />
+<meta itemprop="wordCount" content="507">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="knowledge index"/>
+<meta name="twitter:description" content="Linux 再谈 slab 伙伴算法 Socket write &amp; read seq锁 惊群效应 BBR cache c&#43;&#43; 取二进制最右非 0 位：n &amp; (~(n - 1)), 但是有溢出的风险 n &amp; -n returns the rightmost 1 bit in n. n &amp; (n - 1) 消除最右 1 X % 2^n ="/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">bilosikia</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">bilosikia</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">knowledge index</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2021-06-09 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#linux">Linux</a></li>
+    <li><a href="#c">c++</a>
+      <ul>
+        <li><a href="#template">template</a></li>
+      </ul>
+    </li>
+    <li><a href="#rust">Rust</a></li>
+    <li><a href="#网络">网络</a></li>
+    <li><a href="#go">go</a></li>
+    <li><a href="#分布式">分布式</a></li>
+    <li><a href="#其他">其他</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h1 id="linux">Linux</h1>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/61457076">再谈 slab</a></li>
+<li>伙伴算法</li>
+<li><a href="https://www.cnblogs.com/junneyang/p/6126635.html">Socket write &amp; read</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/364044850">seq锁</a></li>
+<li><a href="https://blog.csdn.net/lyztyycode/article/details/78648798">惊群效应</a></li>
+<li><a href="https://www.bilibili.com/video/BV1h64y1x72H?spm_id_from=333.999.0.0">BBR</a></li>
+<li><a href="http://www.wowotech.net/memory_management/458.html">cache</a></li>
+</ul>
+<h1 id="c">c++</h1>
+<ul>
+<li>
+<p>取二进制最右非 0 位：n &amp; (~(n - 1)), 但是有溢出的风险</p>
+</li>
+<li>
+<p>n &amp; -n returns the <strong>rightmost 1 bit in n</strong>.</p>
+</li>
+<li>
+<p>n &amp; (n - 1) 消除最右 1</p>
+</li>
+<li>
+<p>X % 2^n = X &amp; (2^n - 1)，环形队列，时间轮实现</p>
+</li>
+<li>
+<p>GUARDED_BY</p>
+</li>
+<li>
+<p>容器元素比较：严格弱序</p>
+</li>
+<li>
+<p>s.size() - 10 的结果是无符号</p>
+</li>
+<li>
+<p><a href="https://stackoverflow.com/questions/5004162/what-does-it-mean-for-a-data-structure-to-be-intrusive">intrusive</a></p>
+</li>
+<li>
+<p>COW: <a href="https://www.cnblogs.com/promise6522/archive/2012/03/22/2412686.html">std::string的Copy-on-Write：不如想象中美好</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/cyfonly/p/5800758.html">伪共享（false sharing），并发编程无声的性能杀手</a></p>
+</li>
+<li>
+<p>17 版本后，可以直接写 std::array vec = {&ldquo;hello&rdquo;}, 不用写类型和个数了</p>
+</li>
+<li>
+<p>对 cast 完的指针就行 dereference 是 UB(TBAA 优化)</p>
+</li>
+<li>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzU1OTgxNDY0Ng==&amp;mid=2247483723&amp;idx=1&amp;sn=c9569b2ba072a6c32c231199a18be699&amp;chksm=fc10c3d2cb674ac4c44f7c834b4a238e0f95363b99d206650bf161be749cebf1ba08c0da7354&amp;token=2028512086&amp;lang=zh_CN#rd">cmake变量</a></p>
+</li>
+<li>
+<p><a href="http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html">Why Memory Barriers</a></p>
+</li>
+<li>
+<p><a href="https://mp.weixin.qq.com/s/fB0IILuBBuk_YrKNjW_3Ag">jemalloc</a></p>
+</li>
+</ul>
+<h2 id="template">template</h2>
+<ul>
+<li>测试类型</li>
+<li>测试满足条件</li>
+<li>static_assert 不能直接写 false</li>
+<li><a href="https://www.jianshu.com/p/db76a8b08694">协变&amp;逆变</a></li>
+</ul>
+<h1 id="rust">Rust</h1>
+<ul>
+<li>
+<p><a href="https://www.ncameron.org/blog/dyn-trait-and-impl-trait-in-rust/">dyn Trait and impl Trait in Rust</a></p>
+</li>
+<li>
+<p><a href="https://blog.thomasheartman.com/posts/on-generics-and-associated-types">On Generics and Associated Types</a></p>
+</li>
+<li>
+<p>inclusive ranges</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="o">..=</span><span class="mi">26</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="fm">println!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>matches!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let bar = Some(4);
+</span></span><span class="line"><span class="cl">assert!(matches!(bar, Some(x) if x &gt; 2));
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><a href="https://guihao-liang.github.io/2020/06/06/fat-pointer">fat pointer</a></p>
+</li>
+<li>
+<p><a href="https://alschwalm.com/blog/static/2017/03/07/exploring-dynamic-dispatch-in-rust/">Dynamic Dispatch in Rust</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/404574814">Higher-Rank Trait Bounds</a></p>
+</li>
+<li>
+<p><a href="https://tmandry.gitlab.io/blog/posts/optimizing-await-1/">generator 内存优化</a></p>
+</li>
+<li>
+<p>Trait 不仅可以包含 type 和 function，还可以包含常量</p>
+</li>
+<li>
+<p><a href="https://doc.rust-lang.org/rust-by-example/scope/lifetime/static_lifetime.html">&amp;&lsquo;static T vs T: &lsquo;static</a></p>
+</li>
+<li>
+<p>MutexGuard !send but sync</p>
+</li>
+<li>
+<p>[<a href="https://doc.rust-lang.org/std/slice/index.html">slice</a>::<a href="https://doc.rust-lang.org/std/slice/fn.from_ref.html#">from_ref</a>]</p>
+</li>
+</ul>
+<h1 id="网络">网络</h1>
+<ul>
+<li><a href="https://www.nginx.com/resources/glossary/layer-4-load-balancing/">layer 4负载均衡</a></li>
+<li><a href="https://segmentfault.com/a/1190000021494676">https详解</a></li>
+<li><a href="https://www.bilibili.com/video/BV184411777S">TLS安全网络传输协议简介-侯涛</a></li>
+</ul>
+<h1 id="go">go</h1>
+<ul>
+<li><a href="https://www.zhihu.com/question/60426831">package和文件夹的关系</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/183044306">Go包初始化顺序</a></li>
+</ul>
+<h1 id="分布式">分布式</h1>
+<ul>
+<li><a href="https://danielw.cn/history-of-distributed-systems-1">分布式系统一致性的发展历史</a></li>
+<li></li>
+</ul>
+<h1 id="其他">其他</h1>
+<ul>
+<li><a href="http://www.matrix67.com/blog/">np问题</a></li>
+<li><a href="https://tanxinyu.work/2021-annual-summary/">大佬的总结</a>
+<ul>
+<li>一位清华大佬的年终总结，总结了本科到研三的学习经历，一些值得学习的经验思考。能从文章中看到优秀的人是如何学习，如何安排自己时间，如果规划工作的，总结部分能引起强烈共鸣。</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">bilosikia</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2021-06-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/net/keep-alive/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">keep-alive</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/rust/rust-pin-unpin/">
+            <span class="next-text nav-default">rust Pin &amp; Unpin</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="https://bilosikia.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>bilosikia</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

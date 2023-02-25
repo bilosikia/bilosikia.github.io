@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>c&#43;&#43;20 coroutine - bilosikia</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="bilosikia" /><meta name="description" content="协程 什么是协程 可以在指定位置暂停，并从暂停点恢复执行 可以有多个暂停点，可以多 次返回（generator） 协程的本地数据需要持久化 协程分类 控制" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.110.0 with theme even" />
+
+
+<link rel="canonical" href="https://bilosikia.github.io/post/c&#43;&#43;/coroutine/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="c&#43;&#43;20 coroutine" />
+<meta property="og:description" content="协程 什么是协程 可以在指定位置暂停，并从暂停点恢复执行 可以有多个暂停点，可以多 次返回（generator） 协程的本地数据需要持久化 协程分类 控制" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bilosikia.github.io/post/c&#43;&#43;/coroutine/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-09-11T14:55:59+08:00" />
+<meta property="article:modified_time" content="2022-09-11T14:55:59+08:00" />
+<meta itemprop="name" content="c&#43;&#43;20 coroutine">
+<meta itemprop="description" content="协程 什么是协程 可以在指定位置暂停，并从暂停点恢复执行 可以有多个暂停点，可以多 次返回（generator） 协程的本地数据需要持久化 协程分类 控制"><meta itemprop="datePublished" content="2022-09-11T14:55:59+08:00" />
+<meta itemprop="dateModified" content="2022-09-11T14:55:59+08:00" />
+<meta itemprop="wordCount" content="3980">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="c&#43;&#43;20 coroutine"/>
+<meta name="twitter:description" content="协程 什么是协程 可以在指定位置暂停，并从暂停点恢复执行 可以有多个暂停点，可以多 次返回（generator） 协程的本地数据需要持久化 协程分类 控制"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">bilosikia</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">bilosikia</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">c&#43;&#43;20 coroutine</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-09-11 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#协程">协程</a>
+      <ul>
+        <li><a href="#什么是协程">什么是协程</a></li>
+        <li><a href="#协程分类">协程分类</a></li>
+        <li><a href="#协程-coroutine-frame">协程 coroutine frame</a></li>
+      </ul>
+    </li>
+    <li><a href="#c20-coroutinue">c++20 coroutinue</a>
+      <ul>
+        <li><a href="#协程接口">协程接口</a></li>
+        <li><a href="#co_await">co_await</a></li>
+      </ul>
+    </li>
+    <li><a href="#promise_type">promise_type</a></li>
+    <li><a href="#coroutine_traits">coroutine_traits</a></li>
+    <li><a href="#awaitable--awaiter">awaitable &amp; awaiter</a></li>
+    <li><a href="#await-协程">await 协程</a></li>
+    <li><a href="#协程例子">协程例子</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h1 id="协程">协程</h1>
+<h2 id="什么是协程">什么是协程</h2>
+<ul>
+<li>可以在指定位置暂停，并从暂停点恢复执行</li>
+<li>可以有多个暂停点，可以多 次返回（generator）</li>
+<li>协程的本地数据需要持久化</li>
+</ul>
+<h2 id="协程分类">协程分类</h2>
+<ul>
+<li>控制传递机制: 对称/非对称（return to caller）</li>
+<li>是否作为语言的第一类（first class）对象提供：语言特性和编译器支持有栈(stackfull) / 无栈(stackless): 是否有独立的运行时栈</li>
+</ul>
+<h2 id="协程-coroutine-frame">协程 coroutine frame</h2>
+<p>协程的执行被分为 3 个阶段：</p>
+<ul>
+<li><strong>Suspend:</strong>  暂停当前协程的执行，返回给调用者或者恢复者</li>
+<li><strong>Resume</strong>：恢复当前协程的执行</li>
+<li><strong>Destroy</strong>：销毁协程栈，保持的变量，释放栈帧和内存</li>
+</ul>
+<p>由于协程可以被暂停，可以被恢复，协程的运行状态需要被保存下来。而栈会随着函数返回被销毁，故栈不能用来保存协程状态。</p>
+<p>协程会在堆上保存自己的状态。
+可以简单认为运行的协程有两部分组成：</p>
+<ul>
+<li>stack frame：普通的函数栈帧，会随着协作暂停而销毁，会随着协程恢复而创建。</li>
+<li>coroutine frame：堆上的协程栈，会保存跨暂停点的变量，在协程暂停时，会保存暂停点用于后续恢复，保存调用的协程返回值。</li>
+</ul>
+<h1 id="c20-coroutinue">c++20 coroutinue</h1>
+<ul>
+<li>3个语言关键字，co_await, co_yield, co_return</li>
+<li>一些新的类型：
+<ul>
+<li>coroutine_handle</li>
+<li>coroutine_traits&lt;Ts…&gt;</li>
+<li>suspend_always</li>
+<li>suspend_never</li>
+</ul>
+</li>
+<li>库编写者可以和协程交互以及定义行为的通用机制</li>
+<li>更容易编写异步代码语言级设施</li>
+</ul>
+<p>c++20 没有提供协程库，只提供了用于构造协程库的基础设施，要直接使用现有的协程基础类型编写安全的异步代码还是非常不方便的。</p>
+<p>函数体中一定要有 co_return，co_await，co_yield 三个关键字中一个，才算是一个协程。即便返回了 包含内部类 promise_type 的对象，也不是一个协程。不会有 init suspend 和 final suspend 点。</p>
+<h2 id="协程接口">协程接口</h2>
+<p>c++ 标准定义了两个接口：</p>
+<ul>
+<li>
+<p><strong>Promise</strong> interfac：用来控制协程的行为</p>
+<ul>
+<li>定义协程被调用时的行为</li>
+<li>定义协程返回时的行为</li>
+<li>定义<code>co_await</code> or <code>co_yield</code> 表达式的行为</li>
+</ul>
+</li>
+<li>
+<p><strong>Awaitable</strong> interface：用来定义 co_await 表达式的语义</p>
+<ul>
+<li>是否暂停当前协程的执行</li>
+<li>执行指定的逻辑使得协程在合适的时机恢复</li>
+<li>如何获得协程的返回值</li>
+</ul>
+</li>
+</ul>
+<h2 id="co_await">co_await</h2>
+<p>co_await 是一个一元操作符，co_await awaitable。</p>
+<p>awaitable 需要满足特定的条件：</p>
+<ul>
+<li>
+<p>Normally Awaitable：实现了 operator co_await()， 返回对象实现了 await_ready, await_suspend 和 await_resume，返回的对象被称为 awaiter。</p>
+</li>
+<li>
+<p>Contextually Awaitable：co_await 表达式所在协程，有定义 await_transform 函数，用于将 someValue 转换为满足 Normally Awaitable 的对象。</p>
+</li>
+</ul>
+<h1 id="promise_type">promise_type</h1>
+<p>只要在函数体内使用了 co_await, co_yield和co_return 其中之一的关键字，就会触发编译器把该函数编译为协程而不是普通函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">co_await</span> <span class="n">promise</span><span class="p">.</span><span class="n">initial_suspend</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">try</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="n">body</span><span class="o">-</span><span class="n">statements</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">catch</span> <span class="p">(...)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">promise</span><span class="p">.</span><span class="n">unhandled_exception</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nl">FinalSuspend</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">co_await</span> <span class="n">promise</span><span class="p">.</span><span class="n">final_suspend</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>promise_type 定义并控制了协程本身的行为。可以自定义协程被调用/返回时，co_await 或 co_yield 表达式的行为。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">promise_type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">task</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">get_return_object</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">unhandled_exception</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 控制协程在执行协程体代码之前是应该挂起，还是立即执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">auto</span> <span class="nf">initial_suspend</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 在返回到调用者/恢复者之前协程有一个机会来运行一些额外的逻辑
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 此时协程体已退出，局部变量已析构
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// resume 一个在 final_suspend 点挂起的协程行为是未定义的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">auto</span> <span class="nf">final_suspend</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// co_return 返回 void 时被调用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="nf">return_void</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// co_return 返回 T 类型的值时被调用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="nf">return_value</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 用来生成 co_await 操作符需要的 Awaitable 对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Awaitable</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Awaitable</span><span class="o">&amp;&amp;</span> <span class="n">await_transform</span><span class="p">(</span><span class="n">Awaitable</span><span class="o">&amp;&amp;</span> <span class="n">awaitable</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="coroutine_traits">coroutine_traits</h1>
+<p>前面说到，promise_type 用来控制协程的行为。当定义了一个协程时，编译器如何知道该使用哪一个 promise type 呢？</p>
+<p>coroutine_traits 是标准库定义的一个 trait，可以根据定义的协程参数，返回类型，得到 promise type。详见 <a href="https://en.cppreference.com/w/cpp/coroutine/coroutine_traits">https://en.cppreference.com/w/cpp/coroutine/coroutine_traits</a>。</p>
+<p>标准库的 coroutine_traits 要求协程的返回类型中需要定义 promise_type 类型。</p>
+<p>我们也可以特化 coroutine_traits，从而可以实现把已有类型作为协程的返回类型。 如 <a href="https://en.cppreference.com/w/cpp/coroutine/coroutine_traits">std::future </a>作为协程返回类型。</p>
+<p>一般情况下，协程的库都会定义一个协程返回类型，如 cppcoro 定义的 <a href="https://github.com/lewissbaker/cppcoro/blob/master/include/cppcoro/task.hpp">task</a>。</p>
+<h1 id="awaitable--awaiter">awaitable &amp; awaiter</h1>
+<p>什么是 awaiter?</p>
+<p>满足 co_await 运算符函数定义的对象。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Awaiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当前协程是否 ready
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 在操作同步完成而不需要挂起的情况下，可以避免 &lt;suspend-coroutine&gt; 操作的成本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">bool</span> <span class="nf">await_ready</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回值成为 co_await 表达式的结果.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 也可以抛出异常，在这种情况下异常从 co_await 表达式中抛出.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果异常从 await_suspen 抛出，则协程会自动恢复，并且异常会从 co_await 表达式抛出而不调用 await_resume.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="nf">await_resume</span><span class="p">()</span> <span class="k">noexcept</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// void: 无条件地将执行转移回协程的调用者/恢复者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// bool: 允许 awaiter 对象有条件地返回并立即恢复协程, 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// false 时，可以立马恢复协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// true 时，同 void
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// coroutine_handle: 将 coroutine_handle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">(</span><span class="kt">void</span> <span class="o">|</span> <span class="kt">bool</span> <span class="o">|</span> <span class="n">coroutine_handle</span><span class="p">)</span> <span class="n">await_suspend</span><span class="p">(</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">coroutine</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>什么是 awaitable？</p>
+<p>能够支持 co_await 运算符。</p>
+<p>支持 co_await 运算符的类型，不一定是直接的 awaiter 类型，只要能通过某种方式转换到 awaiter 对象，该类型就是 awaitable。
+转换方式：</p>
+<ol>
+<li>类型定义了 operator co_await，返回类型就是 awaiter。</li>
+<li>定义了到 awaiter 类型的转换。</li>
+<li>所在 promise_type 定义了 await_transform，返回的类型可以得到/转换到 awaiter。</li>
+</ol>
+<p>转换伪代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">P</span><span class="p">,</span> <span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">get_awaitable</span><span class="p">(</span><span class="n">P</span><span class="o">&amp;</span> <span class="n">promise</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">expr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">has_any_await_transform_member_v</span><span class="o">&lt;</span><span class="n">P</span><span class="o">&gt;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">promise</span><span class="p">.</span><span class="n">await_transform</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">expr</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">   <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">expr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Awaitable</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span> <span class="n">get_awaiter</span><span class="p">(</span><span class="n">Awaitable</span><span class="o">&amp;&amp;</span> <span class="n">awaitable</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">has_member_operator_co_await_v</span><span class="o">&lt;</span><span class="n">Awaitable</span><span class="o">&gt;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Awaitable</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">awaitable</span><span class="p">).</span><span class="k">operator</span> <span class="k">co_await</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">   <span class="k">else</span> <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">has_non_member_operator_co_await_v</span><span class="o">&lt;</span><span class="n">Awaitable</span><span class="o">&amp;&amp;&gt;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">operator</span> <span class="k">co_await</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Awaitable</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">awaitable</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">   <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Awaitable</span><span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">awaitable</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="await-协程">await 协程</h1>
+<p>一个协程可以 co_await 其他协程，这是两个不同的协程，它们的 coroutine_handle 的地址不同。</p>
+<p>c++20 的协程是对称式的，不同于函数返回时，一定会回到调用者的调用栈，协程返回时，下一步该执行什么代码是由协程的实现决定的。当一个协程 ready 时，它可以唤醒等待它的协程，也可以唤醒其他和它没有关系的协程。</p>
+<p>当协程被调用时，promise_type 的 initial_suspend 决定了协程是否可以立马被执行。
+如果 initial_suspend 返回 true，则协程被创建了，并完成了协程 frame 的分配，后续需要通过 resume 或者 co_await 运算符来运行协程。</p>
+<p>当协程运行后，遇到 co_await 时，awaiter 的 await_ready 决定了 awaiter 是否 ready。
+如果没有 ready，会暂停当前协程，然后调用 awaiter 的 await_suspend。
+如果 ready，则通过 awaiter 的 await_resume 获取被 co_await 协程（awaiter 所属协程）的返回值。</p>
+<p>await_suspend 是 await 协程的关键。await_suspend 被调用时，当前协程(并非 awaiter 所属协程)已经被暂停了。根据 awaiter 的 await_suspend 函数返回值，可以控制当前协程被暂后，下一步将控制权移交给谁。</p>
+<p>await_suspend 的入参 coroutine_handle 是当前调用栈所属协程：</p>
+<ul>
+<li>非 FinalAwaiter 时，协程已暂停，为协程调用方的 coroutine_handle。</li>
+<li>FinalAwaiter 时，此时调用方为 FinalAwaiter 所在协程。</li>
+</ul>
+<p>await 表达式编译器生成的伪代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">value</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">expr</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">awaitable</span> <span class="o">=</span> <span class="n">get_awaitable</span><span class="p">(</span><span class="n">promise</span><span class="p">,</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span><span class="o">&amp;&amp;</span> <span class="n">awaiter</span> <span class="o">=</span> <span class="n">get_awaiter</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">awaitable</span><span class="p">)</span><span class="o">&gt;</span><span class="p">(</span><span class="n">awaitable</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">awaiter</span><span class="p">.</span><span class="n">await_ready</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">using</span> <span class="n">handle_t</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">P</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">using</span> <span class="n">await_suspend_result_t</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">            <span class="k">decltype</span><span class="p">(</span><span class="n">awaiter</span><span class="p">.</span><span class="n">await_suspend</span><span class="p">(</span><span class="n">handle_t</span><span class="o">::</span><span class="n">from_promise</span><span class="p">(</span><span class="n">p</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 先暂停当前协程(co_await 调用所在协程)，后调用 await_suspend.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 编译器生成一些代码来保存协程的当前状态并准备恢复.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 这包括存储 &lt;resume-point&gt; 的位置，以及将当前寄存器中的值保存到协程frame.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">&lt;</span><span class="n">suspend</span><span class="o">-</span><span class="n">coroutine</span><span class="o">&gt;</span> 
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="k">constexpr</span> <span class="p">(</span><span class="n">is_void</span><span class="o">&lt;</span><span class="n">await_suspend_result_t</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 无条件暂停协程，返给给调用者，恢复者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">awaiter</span><span class="p">.</span><span class="n">await_suspend</span><span class="p">(</span><span class="n">handle_t</span><span class="o">::</span><span class="n">from_promise</span><span class="p">(</span><span class="n">p</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">            <span class="o">&lt;</span><span class="k">return</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">caller</span><span class="o">-</span><span class="n">or</span><span class="o">-</span><span class="n">resumer</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">awaiter</span><span class="p">.</span><span class="n">await_suspend</span><span class="p">(</span><span class="n">handle_t</span><span class="o">::</span><span class="n">from_promise</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// bool 类型，只有为 true 时，暂停协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="o">&lt;</span><span class="k">return</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">caller</span><span class="o">-</span><span class="n">or</span><span class="o">-</span><span class="n">resumer</span><span class="o">&gt;</span> 
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 执行返回的协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="o">&lt;</span><span class="k">return</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">coroutine</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 恢复点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">&lt;</span><span class="n">resume</span><span class="o">-</span><span class="n">point</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取操作的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">awaiter</span><span class="p">.</span><span class="n">await_resume</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>awaiter 是协程之间通信的桥梁，co_await 一个协程时，会询问协程你当前 ready 没有，如果 ready 了，那我就获取你的结果，如果没有 ready，请告诉我应该怎么办，我是应该返回上一级，还是我应该执行其他协程。c++ 协程方案没有协程的调用器，需要由库来实现，awaiter 也是调度器实现的关键。</p>
+<p>注意区分 co_await 和 co_return 的区别，co_await 是等待其他协程的结果，co_return 是为当前协程返回值，但协程的返回值如果让等待的协程获取呢？还是得通过 awaiter 的 await_resume 函数。co_return 通过调用 promise_type 的 return_value 函数，将结果保存在协程对象中，co_await 时在通过 await_resume 取回。</p>
+<h1 id="协程例子">协程例子</h1>
+<p>调用关系：TopTask -&gt; MiddleTask -&gt; LeafTask</p>
+<p>唤醒关系：LeafTask::awaiter::await_suspend -&gt;  LeafTask::FinalAwaiter::await_suspend -&gt;MiddleTask::resume -&gt; MiddleTask::FinalAwaiter::await_suspend -&gt; TopTask::resume</p>
+<p>注意，唤醒之后，协程在另一个线程中运行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span><span class="lnt">197
+</span><span class="lnt">198
+</span><span class="lnt">199
+</span><span class="lnt">200
+</span><span class="lnt">201
+</span><span class="lnt">202
+</span><span class="lnt">203
+</span><span class="lnt">204
+</span><span class="lnt">205
+</span><span class="lnt">206
+</span><span class="lnt">207
+</span><span class="lnt">208
+</span><span class="lnt">209
+</span><span class="lnt">210
+</span><span class="lnt">211
+</span><span class="lnt">212
+</span><span class="lnt">213
+</span><span class="lnt">214
+</span><span class="lnt">215
+</span><span class="lnt">216
+</span><span class="lnt">217
+</span><span class="lnt">218
+</span><span class="lnt">219
+</span><span class="lnt">220
+</span><span class="lnt">221
+</span><span class="lnt">222
+</span><span class="lnt">223
+</span><span class="lnt">224
+</span><span class="lnt">225
+</span><span class="lnt">226
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;experimental/coroutine&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">TopTask</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">~</span><span class="n">TopTask</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;TopTask  destructed&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">promise_type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">TopTask</span> <span class="nf">get_return_object</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;::</span><span class="n">from_promise</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;TopTask handle address: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">handle</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">TopTask</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">.</span><span class="n">handle_</span> <span class="o">=</span> <span class="n">handle</span>
+</span></span><span class="line"><span class="cl">            <span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">suspend_always</span> <span class="n">initial_suspend</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">suspend_never</span> <span class="n">final_suspend</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">unhandled_exception</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">return_void</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">MiddleTask</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">FinalAwaiter</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">promise_type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">promise_type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span> <span class="n">continuation_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">MiddleTask</span> <span class="nf">get_return_object</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;::</span><span class="n">from_promise</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;MiddleTask handle address: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">handle</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">MiddleTask</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">.</span><span class="n">handle_</span> <span class="o">=</span> <span class="n">handle</span>
+</span></span><span class="line"><span class="cl">            <span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">suspend_never</span> <span class="n">initial_suspend</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">FinalAwaiter</span> <span class="nf">final_suspend</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">h</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;::</span><span class="n">from_promise</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="p">{.</span><span class="n">handle_</span> <span class="o">=</span> <span class="n">h</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">unhandled_exception</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">return_void</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">FinalAwaiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">bool</span> <span class="nf">await_ready</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">await_suspend</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span> <span class="n">cont</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;MiddleTask FinalAwaiter await_suspend: cont address= &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">cont</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">                      <span class="o">&lt;&lt;</span> <span class="n">handle_</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;MiddleTask FinalAwaiter await_suspend, resume continuation&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">handle_</span><span class="p">.</span><span class="n">promise</span><span class="p">().</span><span class="n">continuation_</span><span class="p">.</span><span class="n">resume</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">await_resume</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">Awaiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">bool</span> <span class="nf">await_ready</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">await_suspend</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span> <span class="n">cont</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;MiddleTask await_suspend: cont= &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">cont</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;handle= &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">handle_</span><span class="p">.</span><span class="n">address</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                      <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;MiddleTask await_suspend:, do nothing, return to caller&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">handle_</span><span class="p">.</span><span class="n">promise</span><span class="p">().</span><span class="n">continuation_</span> <span class="o">=</span> <span class="n">cont</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">await_resume</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Awaiter</span> <span class="k">operator</span> <span class="nf">co_await</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Awaiter</span><span class="p">{.</span><span class="n">handle_</span> <span class="o">=</span> <span class="n">handle_</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">LeafTask</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">FinalAwaiter</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">Awaiter</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">promise_type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">promise_type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span> <span class="n">continue_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">LeafTask</span> <span class="nf">get_return_object</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;::</span><span class="n">from_promise</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask handle address: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">handle</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">LeafTask</span><span class="p">{.</span><span class="n">handle_</span> <span class="o">=</span> <span class="n">handle</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">suspend_always</span> <span class="n">initial_suspend</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">FinalAwaiter</span> <span class="nf">final_suspend</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">FinalAwaiter</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">unhandled_exception</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">return_void</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">FinalAwaiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">bool</span> <span class="nf">await_ready</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// cont 是 FinalAwaiter 所在协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">await_suspend</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">cont</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask FinalAwaiter await_suspend: cont= &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">cont</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask FinalAwaiter await_suspend, resume caller&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">cont</span><span class="p">.</span><span class="n">promise</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">p</span><span class="p">.</span><span class="n">continue_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">await_resume</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">Awaiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 所在协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;</span><span class="n">promise_type</span><span class="o">&gt;</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">bool</span> <span class="nf">await_ready</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// cont: 调用方协程. awaiter 所在协程已经被暂停
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">void</span> <span class="nf">await_suspend</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">coroutine_handle</span><span class="o">&lt;&gt;</span> <span class="n">cont</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">handle_</span><span class="p">.</span><span class="n">promise</span><span class="p">().</span><span class="n">continue_</span> <span class="o">=</span> <span class="n">cont</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask await_suspend: con= &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">cont</span><span class="p">.</span><span class="n">address</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;handle &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">handle_</span><span class="p">.</span><span class="n">address</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                      <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">c</span> <span class="o">=</span> <span class="n">handle_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">auto</span> <span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">]()</span> <span class="k">mutable</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask await_suspend, waker thread resume coroutine after 10 s&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask await_suspend, waker thread pid: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">get_id</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">{</span><span class="mi">5</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">                <span class="n">c</span><span class="p">.</span><span class="n">resume</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">};</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="p">(</span><span class="n">f</span><span class="p">).</span><span class="n">detach</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;LeafTask await_suspend, spawn waker thread, return to caller&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">await_resume</span><span class="p">()</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Awaiter</span> <span class="k">operator</span> <span class="nf">co_await</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Awaiter</span><span class="p">{.</span><span class="n">handle_</span> <span class="o">=</span> <span class="n">handle_</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="nf">bar</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;befor bar&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">co_await</span> <span class="n">std</span><span class="o">::</span><span class="n">experimental</span><span class="o">::</span><span class="n">suspend_never</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;after bar, current pid: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">get_id</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">MiddleTask</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;before foo&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">co_await</span> <span class="n">bar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;after foo&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">TopTask</span> <span class="nf">boo</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;before boo&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">co_await</span> <span class="n">foo</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;after boo&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">TopTask</span> <span class="n">t</span> <span class="o">=</span> <span class="n">boo</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span><span class="p">.</span><span class="n">handle_</span><span class="p">.</span><span class="n">resume</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;TopTask is done: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">t</span><span class="p">.</span><span class="n">handle_</span><span class="p">.</span><span class="n">done</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">TopTask</span> <span class="n">handle</span> <span class="nl">address</span><span class="p">:</span> <span class="mh">0x6000038d8210</span>
+</span></span><span class="line"><span class="cl"><span class="n">before</span> <span class="n">boo</span>
+</span></span><span class="line"><span class="cl"><span class="n">MiddleTask</span> <span class="n">handle</span> <span class="nl">address</span><span class="p">:</span> <span class="mh">0x6000023d81c0</span>
+</span></span><span class="line"><span class="cl"><span class="n">before</span> <span class="n">foo</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="n">handle</span> <span class="nl">address</span><span class="p">:</span> <span class="mh">0x6000036d9120</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="nl">await_suspend</span><span class="p">:</span> <span class="n">con</span><span class="o">=</span> <span class="mh">0x6000023d81c0</span> <span class="n">handle</span> <span class="mh">0x6000036d9120</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="n">await_suspend</span><span class="p">,</span> <span class="n">spawn</span> <span class="n">waker</span> <span class="kr">thread</span><span class="p">,</span> <span class="k">return</span> <span class="n">to</span> <span class="n">caller</span>
+</span></span><span class="line"><span class="cl"><span class="n">MiddleTask</span> <span class="nl">await_suspend</span><span class="p">:</span> <span class="n">cont</span><span class="o">=</span> <span class="mh">0x6000038d8210</span> <span class="n">handle</span><span class="o">=</span> <span class="mh">0x6000023d81c0</span>
+</span></span><span class="line"><span class="cl"><span class="n">MiddleTask</span> <span class="nl">await_suspend</span><span class="p">:,</span> <span class="k">do</span> <span class="n">nothing</span><span class="p">,</span> <span class="k">return</span> <span class="n">to</span> <span class="n">caller</span>
+</span></span><span class="line"><span class="cl"><span class="n">TopTask</span> <span class="n">is</span> <span class="nl">done</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="n">await_suspend</span><span class="p">,</span> <span class="n">waker</span> <span class="kr">thread</span> <span class="n">resume</span> <span class="n">coroutine</span> <span class="n">after</span> <span class="mi">10</span> <span class="n">s</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="n">await_suspend</span><span class="p">,</span> <span class="n">waker</span> <span class="kr">thread</span> <span class="nl">pid</span><span class="p">:</span> <span class="mh">0x16d563000</span>
+</span></span><span class="line"><span class="cl"><span class="n">befor</span> <span class="n">bar</span>
+</span></span><span class="line"><span class="cl"><span class="n">after</span> <span class="n">bar</span><span class="p">,</span> <span class="n">current</span> <span class="nl">pid</span><span class="p">:</span> <span class="mh">0x16d563000</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="n">FinalAwaiter</span> <span class="nl">await_suspend</span><span class="p">:</span> <span class="n">cont</span><span class="o">=</span> <span class="mh">0x6000036d9120</span>
+</span></span><span class="line"><span class="cl"><span class="n">LeafTask</span> <span class="n">FinalAwaiter</span> <span class="n">await_suspend</span><span class="p">,</span> <span class="n">resume</span> <span class="n">caller</span>
+</span></span><span class="line"><span class="cl"><span class="n">after</span> <span class="n">foo</span>
+</span></span><span class="line"><span class="cl"><span class="n">MiddleTask</span> <span class="n">FinalAwaiter</span> <span class="nl">await_suspend</span><span class="p">:</span> <span class="n">cont</span> <span class="n">address</span><span class="o">=</span> <span class="mh">0x6000023d81c0</span> <span class="mh">0x6000023d81c0</span>
+</span></span><span class="line"><span class="cl"><span class="n">MiddleTask</span> <span class="n">FinalAwaiter</span> <span class="n">await_suspend</span><span class="p">,</span> <span class="n">resume</span> <span class="n">continuation</span>
+</span></span><span class="line"><span class="cl"><span class="n">after</span> <span class="n">boo</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="参考资料">参考资料：</h1>
+<p><a href="https://lewissbaker.github.io/2017/11/17/understanding-operator-co-await">https://lewissbaker.github.io/2017/11/17/understanding-operator-co-await</a> 系列文章</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">bilosikia</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2022-09-11
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/rust/rust-pin-project/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">rust Pin Project</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/">
+            <span class="next-text nav-default">协变&amp;逆变</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="https://bilosikia.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>bilosikia</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

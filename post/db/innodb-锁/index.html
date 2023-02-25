@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>InnoDB 锁 - bilosikia</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="bilosikia" /><meta name="description" content="事务隔离级别 READ UNCOMMITTED 脏读。 READ COMMITTED Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。 REPEATABLE READ (默认) 逻辑意义上的更新丢失问题" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.110.0 with theme even" />
+
+
+<link rel="canonical" href="https://bilosikia.github.io/post/db/innodb-%E9%94%81/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="InnoDB 锁" />
+<meta property="og:description" content="事务隔离级别 READ UNCOMMITTED 脏读。 READ COMMITTED Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。 REPEATABLE READ (默认) 逻辑意义上的更新丢失问题" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bilosikia.github.io/post/db/innodb-%E9%94%81/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2019-11-16T14:55:59+08:00" />
+<meta property="article:modified_time" content="2019-11-16T14:55:59+08:00" />
+<meta itemprop="name" content="InnoDB 锁">
+<meta itemprop="description" content="事务隔离级别 READ UNCOMMITTED 脏读。 READ COMMITTED Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。 REPEATABLE READ (默认) 逻辑意义上的更新丢失问题"><meta itemprop="datePublished" content="2019-11-16T14:55:59+08:00" />
+<meta itemprop="dateModified" content="2019-11-16T14:55:59+08:00" />
+<meta itemprop="wordCount" content="1754">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="InnoDB 锁"/>
+<meta name="twitter:description" content="事务隔离级别 READ UNCOMMITTED 脏读。 READ COMMITTED Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。 REPEATABLE READ (默认) 逻辑意义上的更新丢失问题"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">bilosikia</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">bilosikia</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">InnoDB 锁</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-11-16 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#事务隔离级别">事务隔离级别</a></li>
+    <li><a href="#锁">锁</a>
+      <ul>
+        <li><a href="#锁的类型">锁的类型</a></li>
+        <li><a href="#意向锁">意向锁</a></li>
+      </ul>
+    </li>
+    <li><a href="#一致性的非锁定读consistent-nonlocking-read">一致性的非锁定读（consistent nonlocking read）</a></li>
+    <li><a href="#一致性锁定读">一致性锁定读</a></li>
+    <li><a href="#行锁算法">行锁算法</a>
+      <ul>
+        <li><a href="#record-lock">Record Lock</a></li>
+        <li><a href="#gap-lock">Gap Lock</a></li>
+        <li><a href="#next--key-lock">Next- Key Lock</a></li>
+        <li><a href="#例1">例1</a></li>
+        <li><a href="#例2">例2</a></li>
+      </ul>
+    </li>
+    <li><a href="#解决更新丢失问题">解决更新丢失问题</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h1 id="事务隔离级别">事务隔离级别</h1>
+<ul>
+<li>READ UNCOMMITTED
+<ul>
+<li>脏读。</li>
+</ul>
+</li>
+<li>READ COMMITTED
+<ul>
+<li>Phantom Problem。在同一事务下，连续执行两次同样的SqL语句可能有不同的结果。</li>
+</ul>
+</li>
+<li>REPEATABLE READ (默认)
+<ul>
+<li>逻辑意义上的更新丢失问题。</li>
+</ul>
+</li>
+<li>SERIALIZABLE</li>
+</ul>
+<h1 id="锁">锁</h1>
+<p>lock的对象是事务，锁定的是数据库中的对象，如表，页，行。一般在事务commit和rollback后释放。</p>
+<p>INNODB 存储引擎支持多粒度（granular）锁定，这种锁定允许事务在行级上的琐和表级上的锁同时存在。</p>
+<p><img src="innodb-lock.png" alt=""></p>
+<h2 id="锁的类型">锁的类型</h2>
+<ul>
+<li>表级锁
+<ul>
+<li>共享锁（S Lock），会阻塞其他事务修改表数据。</li>
+<li>排他锁（X Lock），会阻塞其他事务读和写。</li>
+<li>意向共享锁（IS Lock），事务想要获得一张表中某几行的共享锁。</li>
+<li>意向排他锁（IX Lock），事务想要获得一张表中某几行的排他锁。</li>
+</ul>
+</li>
+<li>行级锁
+<ul>
+<li>共享锁（S Lock），允许事务读一行数据，阻塞其他事务修改数据。</li>
+<li>排他锁（X Lock），允许事务删除或更新一行数据，阻塞其他事务读取和修改数据。</li>
+</ul>
+</li>
+</ul>
+<h2 id="意向锁">意向锁</h2>
+<ul>
+<li>The main purpose of <em>IX</em> and <em>IS</em> locks is to show that someone is locking a row, or going to lock a row in the table.</li>
+<li>S and IX locks allow access by multiple clients. They won&rsquo;t  necessarily conflict until they try to get real locks on the same rows.But a table lock (ALTER TABLE, DROP TABLE, LOCK TABLES) blocks both IS and IX, and vice-versa。</li>
+<li>SELECT &hellip; FOR SHARE sets an IS lock, and SELECT &hellip; FOR UPDATE sets an IX lock.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>X</th>
+<th>IX</th>
+<th>S</th>
+<th>IS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Conflict</td>
+</tr>
+<tr>
+<td>IX</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Conflict</td>
+<td>Compatible</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Conflict</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Compatible</td>
+</tr>
+<tr>
+<td>IS</td>
+<td>Conflict</td>
+<td>Compatible</td>
+<td>Compatible</td>
+<td>Compatible</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>思考题
+<ul>
+<li>为什么要有意向锁？</li>
+<li>事务A和事务B都拿到了IX, 然后分别获取不同行的X锁，会死锁吗？</li>
+</ul>
+</li>
+</ul>
+<h1 id="一致性的非锁定读consistent-nonlocking-read">一致性的非锁定读（consistent nonlocking read）</h1>
+<p>在事务隔离级别 READ COMMIITTED 和 REPEATABLE READ ，InnoDB 通过行多版本并发控制（MVCC）的方式来读取数据库中的行数据，如果读取的行正在执行 DELETE 或 UPDATE 操作，这时读取操作不会去等待行上锁的释放。相反地，INNODB 存储引擎会去读取行的一个快照数据。</p>
+<ul>
+<li>快照数据是通过undo来实现的。</li>
+<li>快照数据不需要上锁，因为没有事务需要对历史数据修改。</li>
+<li>在 READ COMMITTED 事务隔离级别下，对于快照数据，非一致性读总是读取被锁定行的最新一份快照数据。</li>
+<li>在 REPEATABLE READ 事务隔离级别下，对于快照数据，非一致性读总是读取事务开始时的行数据版本。</li>
+</ul>
+<p><img src="innodb-snapshot.png" alt=""></p>
+<h1 id="一致性锁定读">一致性锁定读</h1>
+<ul>
+<li>SELECT… FOR UPDATE：对读取的行记录加一个 X 锁，其他事务不能对已锁定的行加上任何锁。</li>
+<li>SELECT… LOCK IN SHARE MODE：对读取的行记录加一个 S 锁，其他事务可以向被锁定的行加 S 锁，但是如果加 X 锁，则会被阻塞。</li>
+<li>必须在事务中，事务提交或者回顾，锁被释放。</li>
+<li>对于外键值的插入或更新，首先需要査询父表中的记录，即 SELECT 父表。但是对于父表的 SELECT 操作，不是使用一致性非锁定读的方式，因为这样会发生数据不一致的问题，因此这时使用的是 SELECT… LOCK IN SHARE MODE 方式，即主动对父表加一个 S 锁。如果这时父表上已经加 X 锁，子表上的操作会被阻塞。</li>
+</ul>
+<h1 id="行锁算法">行锁算法</h1>
+<h2 id="record-lock">Record Lock</h2>
+<p>单个行记录上的锁。Record Lock 总是会去锁住索引记录，如果 INNODB 存储引擎表在建立的时候没有设置任何一个索引，那么这时 INNODB 存储引擎会使用隐式的主键来进行锁定。</p>
+<h2 id="gap-lock">Gap Lock</h2>
+<p>间隙锁，锁定一个范围，但不包含记录本身。</p>
+<h2 id="next--key-lock">Next- Key Lock</h2>
+<p>Gap Lock+ Record Lock，锁定一个范围，并且锁定记录本身。</p>
+<p>例如，一个索引有 1，2，5这三个值，Next- Key Lock可锁定的区间为：(-∞，1], (1, 2], (2, 5], (5,+∞)。</p>
+<p>然而，当査询的索引含有唯一属性时，INNODB 存储引擎会对 Next- Key Lock 进行优化，将其降级为 Record Lock，即仅锁住索引本身，而不是范围。</p>
+<p>能避免Phantom Problem问题。</p>
+<h2 id="例1">例1</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">IE</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">session</span><span class="w"> </span><span class="n">A</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="err">仅锁定</span><span class="mi">5</span><span class="err">，而不是</span><span class="p">(</span><span class="mi">2</span><span class="err">，</span><span class="mi">5</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">session</span><span class="w"> </span><span class="n">B</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="err">成功，不需要等待</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="例2">例2</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">session</span><span class="w"> </span><span class="n">A</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="err">需要分别锁定两个索引，对于聚集索引，加上</span><span class="n">Record</span><span class="w"> </span><span class="k">Lock</span><span class="p">,</span><span class="w"> </span><span class="err">对于辅助索引，加上</span><span class="k">Next</span><span class="o">-</span><span class="k">Key</span><span class="w"> </span><span class="k">Lock</span><span class="p">,</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="err">。</span><span class="n">InnoDB</span><span class="w"> </span><span class="err">还会对辅助索引加一个</span><span class="n">Gap</span><span class="w"> </span><span class="k">Lock</span><span class="p">,</span><span class="w"> </span><span class="err">（</span><span class="mi">3</span><span class="err">，</span><span class="mi">6</span><span class="p">)</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="mi">3</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">session</span><span class="w"> </span><span class="n">B</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="w"> </span><span class="k">LOCK</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">SHARE</span><span class="w"> </span><span class="k">MODE</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="err">被阻塞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="err">被阻塞</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="err">被阻塞</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>思考题：</p>
+<ul>
+<li>为什么要加（3，6）的Gap Lock?</li>
+</ul>
+<h1 id="解决更新丢失问题">解决更新丢失问题</h1>
+<table>
+<thead>
+<tr>
+<th>事务A</th>
+<th>事务B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读取账户100元</td>
+<td>读取账户100元</td>
+</tr>
+<tr>
+<td>转账99元</td>
+<td></td>
+</tr>
+<tr>
+<td>commit</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>转账1元，结果还剩下99元</td>
+</tr>
+<tr>
+<td></td>
+<td>commit</td>
+</tr>
+</tbody>
+</table>
+<p>串行执行，在事务读账户余额是加X锁（SELECT… FOR UPDATE）。</p>
+<h1 id="参考资料">参考资料</h1>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks">mysql官网</a></p>
+<p>《MySQL技术内幕(InnoDB存储引擎)第2版》</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">bilosikia</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2019-11-16
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/rust/rust-pin-unpin/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">rust Pin &amp; Unpin</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/">
+            <span class="next-text nav-default">Lock-Free简介</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="https://bilosikia.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>bilosikia</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
