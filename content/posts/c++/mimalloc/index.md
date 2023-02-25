@@ -49,7 +49,7 @@ Mimalloc 为每个线程分配一个 heap，所有的分配和释放都只能通
 
 > 注：下面这种图是 1x 的版本，2x 版本把 segment 按照 slice 进行划分，但其他基本没有变化，二者的主要区别可以参考 https://zhuanlan.zhihu.com/p/365094561
 
-![img](https://bytedance.feishu.cn/space/api/box/stream/download/asynccode/?code=MjY1MjJhM2JjZmVlODI2MDUzNTVjNWVlMzY1NGI3YjBfS2tDckx5RE5WYW1tRGJNU0piN3hjRUdyS1dKUmo4a0JfVG9rZW46Ym94Y25aQUhrd2pCcGVvaDZJdDljcmpnOWtkXzE2NzczMjA1MTQ6MTY3NzMyNDExNF9WNA)
+![](mimalloc.png)
 
 每个线程有自己的 heap，主线程的 heap 结构是静态初始化的，其他线程的 heap 在线程创建时进行分配。heap 自身的内存仅能从创建它的线程 allocate 和 deallocate，线程终止时，heap 被 deallocate。_mi_heap_default 是一个 thread-local 指针，指向默认 heap。
 
