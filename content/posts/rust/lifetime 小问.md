@@ -1,6 +1,7 @@
 ---
 title: "lifetime 小问"
 date: 2021-11-23T14:55:59+08:00
+toc: true
 ---
 
 #  非词法作用域

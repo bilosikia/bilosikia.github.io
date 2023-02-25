@@ -1,6 +1,7 @@
 ---
 title: "mimalloc 实现分析"
 date: 2023-02-25T18:23:59+08:00
+toc: true
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "rust Pin Project"
 date: 2022-12-29T17:52:54+08:00
-
+toc: true
 ---
 
 # 再谈 pin 语义
