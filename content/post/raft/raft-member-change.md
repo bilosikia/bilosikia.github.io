@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 If a single configuration change adds or removes many servers, switching the cluster directly
 
 from the old configuration to the new configuration can be unsafe; it isn’t possible to atomically

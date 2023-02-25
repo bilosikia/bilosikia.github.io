@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # serveHttpKVAPI
 
 store.proposeC -> raft.node.propc
