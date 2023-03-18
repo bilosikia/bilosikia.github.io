@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>原子操作可见性 - bilosikia</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="bilosikia" /><meta name="description" content="问题 当 thread1 执行完毕后，thread2 能立马读到 7 吗？ 1 2 3 4 5 std::atomic&amp;lt;int&amp;gt; x{0}; // Thread 1 x.store(7, std::memory_order_relaxed); // Thread 2 x.load(std::memory_order_relaxed); 当 thread1 和 thread2 都执行 f 后，x 的值一定是 200 吗？ 1 2 3 4 5 6 7 8 9 10" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.102.2 with theme even" />
+
+
+<link rel="canonical" href="https://bilosikia.github.io/post/c&#43;&#43;/atomic-and-visibility/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="原子操作可见性" />
+<meta property="og:description" content="问题 当 thread1 执行完毕后，thread2 能立马读到 7 吗？ 1 2 3 4 5 std::atomic&lt;int&gt; x{0}; // Thread 1 x.store(7, std::memory_order_relaxed); // Thread 2 x.load(std::memory_order_relaxed); 当 thread1 和 thread2 都执行 f 后，x 的值一定是 200 吗？ 1 2 3 4 5 6 7 8 9 10" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bilosikia.github.io/post/c&#43;&#43;/atomic-and-visibility/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-03-18T15:57:59+08:00" />
+<meta property="article:modified_time" content="2023-03-18T15:57:59+08:00" />
+
+<meta itemprop="name" content="原子操作可见性">
+<meta itemprop="description" content="问题 当 thread1 执行完毕后，thread2 能立马读到 7 吗？ 1 2 3 4 5 std::atomic&lt;int&gt; x{0}; // Thread 1 x.store(7, std::memory_order_relaxed); // Thread 2 x.load(std::memory_order_relaxed); 当 thread1 和 thread2 都执行 f 后，x 的值一定是 200 吗？ 1 2 3 4 5 6 7 8 9 10"><meta itemprop="datePublished" content="2023-03-18T15:57:59+08:00" />
+<meta itemprop="dateModified" content="2023-03-18T15:57:59+08:00" />
+<meta itemprop="wordCount" content="554">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="原子操作可见性"/>
+<meta name="twitter:description" content="问题 当 thread1 执行完毕后，thread2 能立马读到 7 吗？ 1 2 3 4 5 std::atomic&lt;int&gt; x{0}; // Thread 1 x.store(7, std::memory_order_relaxed); // Thread 2 x.load(std::memory_order_relaxed); 当 thread1 和 thread2 都执行 f 后，x 的值一定是 200 吗？ 1 2 3 4 5 6 7 8 9 10"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">bilosikia</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">bilosikia</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">原子操作可见性</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-03-18 </span>
+        
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#问题">问题</a></li>
+    <li><a href="#分析">分析</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h1 id="问题">问题</h1>
+<p>当 thread1 执行完毕后，thread2 能立马读到 7 吗？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Thread 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">x</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Thread 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">x</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当 thread1 和 thread2 都执行 f 后，x 的值一定是 200 吗？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span><span class="p">.</span><span class="n">fetch_add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Thread 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">f</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Thread 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">f</span><span class="p">();</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="分析">分析</h1>
+<p>对于第一个问题，thread2 可能无法立马读到 7。对于第二个问题，保证 x 的值一定是 200。</p>
+<p>原子操作保证不可分割，对原子类型的读写保证没有数据竞争。</p>
+<p>可见性指一个线程写一个变量后，其他线程是否能够看到最新的值。</p>
+<p>Relaxed memory order 能够保证所有线程看到对同一个变量的修改序是一致的。假如原子变量 x 初始值为 0， 变量先修改为 1，后修改为 2，那么所有线程能读到 x 的顺序只能是 0-1-2。</p>
+<p>对于第一个问题，store 和 load 之间并没有保证 load 一定能读到最新的值，只能保证读到的值的顺序是符合修改序的，且所有线程一致。c++20  标准只是说需要在一个有限的时间能同步到其他线程。</p>
+<blockquote>
+<p>An implementation should ensure that the last value (in modification order) assigned by an atomic or synchronization operation will become visible to all other threads in a finite period of time.</p>
+</blockquote>
+<p>但是对于  read-modify-write (RMW)，c++ 标志规定了 RMW 一定是读到最新的值，RMW 是更昂贵的操作。</p>
+<blockquote>
+<p>Atomic read-modify-write operations shall always read the last value (in the modification order) written before the write associated with the read-modify-write operation.</p>
+</blockquote>
+<p>shared_ptr 内部的引用计数使用原子变量，由于增加计数是 RMW，所以保证读到最新的值，保证计数的准确性。</p>
+<p>上面两个问题都是对一个原子变量的读写，都和内存序没有关系，内存序通过原子变量用来建立 &ldquo;happens-before&rdquo; 关系。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">bilosikia</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2023-03-18
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/c&#43;&#43;/mimalloc/">
+            <span class="next-text nav-default">mimalloc 实现分析</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+  <a href="https://bilosikia.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>bilosikia</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

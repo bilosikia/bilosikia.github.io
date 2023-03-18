@@ -23,7 +23,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.110.0 with theme even" />
+<meta name="generator" content="Hugo 0.102.2 with theme even" />
 
 
 <link rel="canonical" href="https://bilosikia.github.io/post/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/" />
@@ -35,7 +35,7 @@
 
 
 
-<link href="/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css" rel="stylesheet">
+<link href="/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
 
 
@@ -45,6 +45,7 @@
 <meta property="og:url" content="https://bilosikia.github.io/post/c&#43;&#43;/lock-free%E7%AE%80%E4%BB%8B/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2019-09-21T01:15:43+08:00" />
 <meta property="article:modified_time" content="2019-09-21T01:15:43+08:00" />
+
 <meta itemprop="name" content="Lock-Free简介">
 <meta itemprop="description" content="基本概念 Wait-freedom: Wait-freedom means that each thread moves forward regardless of external factors like contention from other threads, other thread blocking. Each operations is executed in a bounded number of steps. It&rsquo;s the strongest guarantee for synchronization algorithms. Lock-freedom: Lock-freedom means that a system as a whole moves forward regardless of anything. Forward progress for each individual thread is not guaranteed (that is, individual threads can starve)."><meta itemprop="datePublished" content="2019-09-21T01:15:43+08:00" />
 <meta itemprop="dateModified" content="2019-09-21T01:15:43+08:00" />
@@ -388,7 +389,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">b</span><span class="o">=</span> <span class="mi">2</span><span class="p">;</span> 
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="err">如果只有一个线程执行，</span><span class="n">b</span><span class="err">可能先于</span><span class="n">a</span><span class="err">执行，但是</span><span class="n">a</span> <span class="n">happens</span><span class="o">-</span><span class="n">before</span> <span class="n">b</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="err">如果只有一个线程执行，</span><span class="n">b可能先于a执行</span><span class="err">，但是</span><span class="n">a</span> <span class="n">happens</span><span class="o">-</span><span class="n">before</span> <span class="n">b</span><span class="p">.</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>作用：明确内存访问/修改顺序，同步。</p>

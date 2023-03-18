@@ -23,7 +23,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.110.0 with theme even" />
+<meta name="generator" content="Hugo 0.102.2 with theme even" />
 
 
 <link rel="canonical" href="https://bilosikia.github.io/post/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/" />
@@ -35,7 +35,7 @@
 
 
 
-<link href="/sass/main.min.f92fd13721ddf72129410fd8250e73152cc6f2438082b6c0208dc24ee7c13fc4.css" rel="stylesheet">
+<link href="/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
 
 
@@ -45,6 +45,7 @@
 <meta property="og:url" content="https://bilosikia.github.io/post/rust/%E5%8D%8F%E5%8F%98%E9%80%86%E5%8F%98/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2021-12-26T14:55:59+08:00" />
 <meta property="article:modified_time" content="2021-12-26T14:55:59+08:00" />
+
 <meta itemprop="name" content="协变&amp;逆变">
 <meta itemprop="description" content="&amp;mutT invariance 1 2 3 4 5 6 7 8 9 10 11 12 13 fn evil_feeder&lt;T&gt;(input: &amp;mut T, val: T) { *input = val; } fn main() { let mut mr_snuggles: &amp;&#39;static str = &#34;meow! :3&#34;; // mr. snuggles forever!! { let spike = String::from(&#34;bark! &gt;:V&#34;); let spike_str: &amp;str = &amp;spike; // Only lives for the block evil_feeder(&amp;mut mr_snuggles, spike_str); // EVIL! } println!(&#34;{}&#34;, mr_snuggles); // Use after free?"><meta itemprop="datePublished" content="2021-12-26T14:55:59+08:00" />
 <meta itemprop="dateModified" content="2021-12-26T14:55:59+08:00" />
@@ -208,8 +209,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="o">|</span><span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="err">`</span><span class="n">spike</span><span class="err">`</span><span class="w"> </span><span class="n">dropped</span><span class="w"> </span><span class="n">here</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="n">still</span><span class="w"> </span><span class="n">borrowed</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>由于<code>&amp;mutT</code> invariance, 因此  T 一定被编译器推导为 <code>&amp;mut &amp;'static str</code>, 要使 evil_feeder 函数编译，T 的类型也只能是 &amp;&lsquo;static str，</p>
-<p>显然不成立。</p>
+</div><p>由于<code>&amp;mutT</code> invariance, 因此  T 一定被编译器推导为 <code>&amp;mut &amp;'static str</code>, 要使 evil_feeder 函数编译，T 的类型也只能是 &amp;&lsquo;static str，显然不成立。</p>
 <h1 id="nonnullt-协变"><code>NonNull&lt;T&gt;</code> 协变</h1>
 <p>不同于 <code>&amp;mut T</code>,  <code>NoneNull&lt;T&gt;</code> 是协变的，在使用时，必须要由使用者保证不会将指针指向更短生命周期的变量。</p>
 <div class="highlight"><div class="chroma">
