@@ -26,7 +26,7 @@ toc: true
 
 通常 SSE 指令要求访问时内存地址对齐到向量长度，主要是为了减少内存或缓存操作的次数。
 
-![](/Users/bytedance/repo/bilosikia.github.io/content/post/c++/simd/simd.png)
+![img](simd.png)
 
 ## 数据类型&寄存器
 
