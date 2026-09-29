@@ -12,7 +12,7 @@ toc: true
 
 检查了 telegraf 的 log 和运行状态，没有发现异常。通过 ss -tiepm 发现 agent 和 telegraf 之间的平均 rtt 高达 21 ms，怀疑是系统的问题。
 
-![img](https://bytedance.larkoffice.com/space/api/box/stream/download/asynccode/?code=NDkyNDc5MTQ2MWM1MzIxNDUxZjk3YTQ5NTc4NzVhMDFfRExGTTBzYnBUTmtVVTc3UlFSSHRRUVRYN29GSEx0c3hfVG9rZW46RW5wNGJGYklpb0E2bU14Y3FBd2NMdWpObjdjXzE3MDQ1MjY3NTE6MTcwNDUzMDM1MV9WNA)
+![img](problem.png)
 
 后经过抓包采样，确认了是 TCP 协议栈慢的问题。后来注意到几个 core 的 cpu 利用率基本都是 100%，发现了业务采样了 DPDK ，业务修改了业务的绑核策略，导致了 telegraf 和 agent 跑在被 DPDK 绑核的 CPU 上，导致 DPDK poll 和 telegraf，agent 抢核，严重影响了网络收发包的性能，造成指标采集上报的性能上不去
 

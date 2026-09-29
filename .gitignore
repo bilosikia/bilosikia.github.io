@@ -1,4 +1,6 @@
-/resources/_gen/**/*
+/resources/_gen/
 .DS_Store
 .hugo_build.lock
+.trae/
+.agents/
 public
