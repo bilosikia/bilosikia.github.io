@@ -28,6 +28,30 @@ fn move_pinned_ref<T>(mut a: T, mut b: T) {
 
 这个语义其实非常的特殊，Pin<P<T>> 被析构后，但它的作用却依然还生效。那如何确保没有 Pin<P<T>>  时，P<T> 不会违背 Pin 的保证呢？这就是为什么 [new_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.new_unchecked) 和 [map_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked) 是 unsafe 的原因。通过 unsafe，将 pin 之后的 T 不会 move 的责任转移到开发者，由开发者在构造 Pin<P<T>> 时承诺，我决不会 move 直到 T drop。 [map_unchecked](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.map_unchecked) 为什么必须是 unsafe 可以参考这个[回答](https://stackoverflow.com/questions/74908088/why-rust-pin-map-unchecked-is-unsafe)。
 
+简单来说，Pin::map_unchecked 不知道 F 函数是怎么实现的，它不会检查 `&U` 引用的对象是不是和原来 `Pin` 所钉住的是同一个实体, &U 指向的对象，可能是可 move 的对象, 后续的使用中可能被 move。如果 &U 是 self 的某个字段，而 self 本身被 pin 住，move U 违背了 pin 的语义。
+```Rust
+unsafe fn map_unchecked<U, F>(self, f: F) -> Pin<&U>
+where
+    F: FnOnce(&T) -> &U,
+    U: ?Sized;
+```
+```Rust
+use std::pin::Pin;
+
+struct Data {
+    a: String,
+    b: i32,
+}
+
+let data = Data { a: "hello".into(), b: 42 };
+let pinned: Pin<&Data> = Pin::new(&data);
+
+// `i32` 本身是可以自由移动的类型，这个 `Pin` 保证是虚假的
+let pinned_b: Pin<&i32> = unsafe {
+    pinned.map_unchecked(|d| &d.b)
+};
+```
+
 为什么语言设计上要设计成这样呢，我个人认为，需要使用到 Pin，则说明该对象不能被 move。如果设计成只有持有 Pin 时，对象才无法被移动，在没有 Pin 时，该对象被移动，将会导致 UB，但是却没有违背任何约束。
 
 # 什么是 pin project
